@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Registrar Relatório de Visita</h2>
+<hr />
+
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label for="escola" class="form-label">Selecione a Escola Visitada</label>
+    <select class="form-select" id="escola" name="escola" required>
+      <option selected disabled value="">Escolha...</option>
+      {% for escola in escolas %}
+      <option value="{{ escola.id }}">
+        {{ escola.nome }} - {{ escola.cidade }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label"
+      >Ocorrências Notadas (marque todas que aplicam)</label
+    >
+    {% for ocorrencia in ocorrencias %}
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        name="ocorrencias"
+        value="{{ ocorrencia.id }}"
+        id="ocorrencia{{ ocorrencia.id }}"
+      />
+      <label class="form-check-label" for="ocorrencia{{ ocorrencia.id }}">
+        {{ ocorrencia.descricao }}
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <label for="detalhes" class="form-label"
+      >Relate com mais detalhes o que você notou:</label
+    >
+    <textarea
+      class="form-control"
+      id="detalhes"
+      name="detalhes"
+      rows="5"
+    ></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-success">Salvar Relatório</button>
+</form>
+
+{% endblock %}

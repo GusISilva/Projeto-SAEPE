@@ -1,0 +1,38 @@
+{% extends 'base.html' %} {% block content %}
+<div class="p-5 mb-4 bg-white rounded-3 shadow-sm">
+  <div class="container-fluid py-5">
+    <h1 class="display-5 fw-bold">Bem-vindo(a), {{ user.username }}!</h1>
+    <p class="col-md-8 fs-4">
+      Este é o seu painel de controle. Utilize os cartões abaixo para navegar
+      pelas funcionalidades do sistema.
+    </p>
+  </div>
+</div>
+
+<div class="row align-items-md-stretch">
+  <div class="col-md-6 mb-4">
+    <div class="h-100 p-5 text-white bg-dark rounded-3 shadow">
+      <h2>Análise de Dados</h2>
+      <p>
+        Visualize gráficos e tabelas gerados a partir da análise da planilha de
+        dados das escolas.
+      </p>
+      <a href="{% url 'analise_dashboard' %}" class="btn btn-outline-light"
+        >Acessar Análise</a
+      >
+    </div>
+  </div>
+  <div class="col-md-6 mb-4">
+    <div class="h-100 p-5 bg-body-secondary border rounded-3 shadow">
+      <h2>Registrar Relatório</h2>
+      <p>
+        Preencha o formulário com as informações da sua visita a uma das escolas
+        cadastradas no sistema.
+      </p>
+      <a href="{% url 'relatorios' %}" class="btn btn-outline-secondary"
+        >Criar Relatório</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

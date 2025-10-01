@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Dashboard de Análise</h2>
+<hr />
+
+{% if erro %}
+<div class="alert alert-danger">{{ erro }}</div>
+{% else %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Registros por Escola</div>
+      <div class="card-body">{{ analise_escola|safe }}</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Média do IDEB por Escola</div>
+      <div class="card-body">{{ media_ideb|safe }}</div>
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %}
