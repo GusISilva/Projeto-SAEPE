@@ -1,28 +1,43 @@
-# core/views.py
-
 import pandas as pd
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .models import Escola, Ocorrencia, Relatorio
 
-# --- Views de Autenticação ---
 
-# NOVA VIEW: Para registro de novos usuários
+#registro de novos usuários
 def registro_view(request):
     if request.user.is_authenticated:
         return redirect('main_dashboard')
         
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user) # Loga o usuário automaticamente após o registro
-            return redirect('main_dashboard')
-    else:
-        form = UserCreationForm()
-    return render(request, 'registro.html', {'form': form})
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        # Validações 
+      
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Este email já está cadastrado.')
+            return render(request, 'registro.html')
+        
+        if len(password) < 8:
+            messages.error(request, 'A senha deve ter no mínimo 8 caracteres.')
+            return render(request, 'registro.html')
+        
+        user = User.objects.create_user(username=username, email=email, password=password)
+        
+        
+        # Mensagem de sucesso
+        messages.success(request, 'Conta criada com sucesso! Bem-vindo!')
+        
+        # Redireciona para o dashboard principal
+        return redirect('main_dashboard')
+    
+    return render(request, 'registro.html')
 
 # VIEW MODIFICADA: Redireciona para o novo dashboard principal
 def login_view(request):
@@ -45,7 +60,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
-
 
 # --- Views da Aplicação (Protegidas por Login) ---
 
@@ -71,9 +85,8 @@ def analise_dashboard_view(request):
         }
     except Exception as e:
         context['erro'] = f"Ocorreu um erro: {e}"
-        
-    return render(request, 'analise_dashboard.html', context)
 
+    return render(request, 'analise_dashboard.html', context)
 
 # VIEW EXISTENTE: Sem grandes alterações necessárias
 @login_required(login_url='login')

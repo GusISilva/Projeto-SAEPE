@@ -22,3 +22,44 @@ A aplicação deverá gerar **gráficos** que facilitem o entendimento e a anál
 - Artur Uchôa
 - Gustavo Igor
 - Rhydrian Coutinho
+🚀 Como rodar o projeto
+
+Perfeito! 🔥 Se vai pro **README**, o ideal é deixar um guia passo a passo bem limpo para quem for clonar e rodar o projeto.
+
+Aqui está o fluxo que funciona no seu caso:
+
+---
+
+## Como rodar o projeto
+
+1.**Ter o Python instalado**
+
+2. **Clonar o repositório**
+
+```bash
+git clone https://github.com/GusISilva/Projeto-SAEPE.git
+```
+
+3. **Entrar na pasta do projeto**
+
+```bash
+cd Projeto-SAEPE
+```
+
+4. **Instalar as dependências**
+
+```bash
+pip install django```
+
+```bash
+pip install pandas
+```
+
+5. **Iniciar o servidor local**
+
+```bash
+python manage.py runserver
+```
+
+6. **Acessar no navegador**
+   👉 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
