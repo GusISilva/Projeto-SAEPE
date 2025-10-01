@@ -22,11 +22,6 @@ A aplicação deverá gerar **gráficos** que facilitem o entendimento e a anál
 - Artur Uchôa
 - Gustavo Igor
 - Rhydrian Coutinho
-🚀 Como rodar o projeto
-
-Perfeito! 🔥 Se vai pro **README**, o ideal é deixar um guia passo a passo bem limpo para quem for clonar e rodar o projeto.
-
-Aqui está o fluxo que funciona no seu caso:
 
 ---
 
