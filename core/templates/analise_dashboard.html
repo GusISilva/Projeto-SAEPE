@@ -1,22 +1,46 @@
-{% extends 'base.html' %} {% block content %}
-<h2>Dashboard de Análise</h2>
+{% extends 'base.html' %} 
+
+{% block content %}
+<h2>Dashboard de Análise {{ titulo_sufixo|default:" - Visão Geral" }}</h2>
 <hr />
 
+<form method="GET" class="mb-4">
+    <div class="row align-items-end">
+        <div class="col-md-4">
+            {{ form.escola.label_tag }}
+            {{ form.escola }}
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'analise_dashboard' %}" class="btn btn-secondary w-100">Limpar Filtro</a>
+        </div>
+    </div>
+</form>
+<hr />
 {% if erro %}
 <div class="alert alert-danger">{{ erro }}</div>
 {% else %}
 <div class="row">
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">Registros por Escola</div>
-      <div class="card-body">{{ analise_escola|safe }}</div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                {% if titulo_sufixo != " - Visão Geral" %}
+                    Registros da Escola
+                {% else %}
+                    Registros por Escola
+                {% endif %}
+            </div>
+            <div class="card-body">{{ analise_escola|safe }}</div>
+        </div>
     </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">Média do IDEB por Escola</div>
-      <div class="card-body">{{ media_ideb|safe }}</div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Média do IDEB por Escola</div>
+            <div class="card-body">{{ media_ideb|safe }}</div>
+        </div>
     </div>
-  </div>
 </div>
-{% endif %} {% endblock %}
+{% endif %} 
+{% endblock %}

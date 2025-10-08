@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Escola, Ocorrencia, Relatorio
+from .forms import EscolaSelectForm # <-- NOVA IMPORTAÇÃO
 
 
 #registro de novos usuários
@@ -112,3 +113,61 @@ def relatorios_view(request):
             'ocorrencias': todas_ocorrencias,
         }
         return render(request, 'relatorios.html', context)
+    
+    # VIEW RENOMEADA: O antigo dashboard agora é o dashboard de análise
+@login_required(login_url='login')
+def analise_dashboard_view(request):
+    # 1. Instanciar o formulário com os dados de filtro
+    form = EscolaSelectForm(request.GET)
+    escola_nome_filtro = None
+    titulo_sufixo = " - Visão Geral"
+    
+    if form.is_valid():
+        escola_obj = form.cleaned_data.get('escola')
+        if escola_obj:
+            # Obtém o nome da escola para usar no filtro do Pandas
+            escola_nome_filtro = escola_obj.nome 
+            titulo_sufixo = f" - {escola_obj.nome}"
+            
+    context = {'form': form, 'titulo_sufixo': titulo_sufixo}
+    
+    try:
+        df = pd.read_excel('dados_escolas.xlsx')
+        
+        # 2. Aplicar a Filtragem no DataFrame
+        if escola_nome_filtro:
+            # Filtra o DataFrame pela coluna 'Escola'
+            df_filtrado = df[df['Escola'] == escola_nome_filtro]
+        else:
+            # Usa o DataFrame completo
+            df_filtrado = df
+
+        # 3. Gerar as Análises com o DataFrame Filtrado
+        
+        # Registros por Escola (Mostra apenas a escola filtrada ou o total de todas se não houver filtro)
+        if escola_nome_filtro:
+             # Para uma escola específica, apenas exibe a contagem total de registros
+             contagem_registros = pd.Series({'Total de Registros': len(df_filtrado)}).to_frame().to_html(classes='table table-striped')
+        else:
+             # Visão Geral: Contagem por todas as escolas
+             contagem_registros = df_filtrado['Escola'].value_counts().to_frame().to_html(classes='table table-striped')
+
+        # Média do IDEB por Escola
+        if escola_nome_filtro:
+             # Para uma escola específica, apenas exibe a média do IDEB dela
+             media_ideb_data = df_filtrado.groupby('Escola')['IDEB'].mean().to_frame().to_html(classes='table table-striped', header=['Média do IDEB'])
+        else:
+             # Visão Geral: Média do IDEB de todas as escolas
+             media_ideb_data = df_filtrado.groupby('Escola')['IDEB'].mean().to_frame().to_html(classes='table table-striped', header=['Média do IDEB'])
+
+        context.update({
+            'analise_escola': contagem_registros, # Use o dado de contagem apropriado
+            'media_ideb': media_ideb_data,
+        })
+        
+    except FileNotFoundError:
+        context['erro'] = "O arquivo 'dados_escolas.xlsx' não foi encontrado. Verifique o caminho."
+    except Exception as e:
+        context['erro'] = f"Ocorreu um erro ao processar os dados: {e}"
+
+    return render(request, 'analise_dashboard.html', context)
