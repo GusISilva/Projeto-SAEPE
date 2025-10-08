@@ -28,3 +28,28 @@ class Relatorio(models.Model):
 
     def __str__(self):
         return f"Relatório para {self.escola.nome} em {self.data_criacao.strftime('%d/%m/%Y')}"
+
+class Visita(models.Model):
+    STATUS_CHOICES = [
+        ('agendada', 'Agendada'),
+        ('realizada', 'Realizada'),
+    ]
+    
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, related_name='visitas')
+    visitante = models.ForeignKey(User, on_delete=models.CASCADE, related_name='visitas_realizadas')
+    recebido_por = models.CharField(max_length=200, verbose_name="Recebido por", blank=True)
+    data_visita = models.DateField(verbose_name="Data da visita")
+    hora_visita = models.TimeField(verbose_name="Horário da visita", null=True, blank=True)
+    objetivo = models.CharField(max_length=300, verbose_name="Objetivo da visita", blank=True)
+    observacoes = models.TextField(verbose_name="Observações", blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='realizada')
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-data_visita', '-hora_visita']
+        verbose_name = "Visita"
+        verbose_name_plural = "Visitas"
+
+    def __str__(self):
+        return f"Visita à {self.escola.nome} em {self.data_visita.strftime('%d/%m/%Y')} - {self.get_status_display()}"   
