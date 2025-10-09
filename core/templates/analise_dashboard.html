@@ -1,46 +1,74 @@
 {% extends 'base.html' %} 
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/analise_dashboard.css' %}">
+{% endblock extra_css %}
 
 {% block content %}
-<h2>Dashboard de Análise {{ titulo_sufixo|default:" - Visão Geral" }}</h2>
-<hr />
+<div class="analise-container my-5">
+    
+    <header class="mb-5">
+        <h1 class="page-title">Dashboard de Análise</h1>
+        <p class="page-subtitle">
+            Visualize os dados e indicadores das escolas.
+            <span class="text-primary-emphasis fw-semibold">{{ titulo_sufixo|default:" - Visão Geral" }}</span>
+        </p>
+    </header>
 
-<form method="GET" class="mb-4">
-    <div class="row align-items-end">
-        <div class="col-md-4">
-            {{ form.escola.label_tag }}
-            {{ form.escola }}
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-        </div>
-        <div class="col-md-2">
-            <a href="{% url 'analise_dashboard' %}" class="btn btn-secondary w-100">Limpar Filtro</a>
-        </div>
-    </div>
-</form>
-<hr />
-{% if erro %}
-<div class="alert alert-danger">{{ erro }}</div>
-{% else %}
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                {% if titulo_sufixo != " - Visão Geral" %}
-                    Registros da Escola
-                {% else %}
-                    Registros por Escola
-                {% endif %}
+    <div class="filter-card shadow-sm mb-5 p-4 rounded-3">
+        <h3 class="card-filter-title mb-3"><i class="fas fa-filter me-2"></i> Filtro por Escola</h3>
+        <form method="GET" class="filter-form">
+            <div class="row align-items-end">
+                
+                <div class="col-md-6 col-lg-5 mb-3 mb-md-0">
+                    <label class="form-label fw-semibold" for="{{ form.escola.id_for_label }}">{{ form.escola.label }}</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-school"></i></span>
+                        {{ form.escola }}
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-7 d-flex justify-content-end gap-3">
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fas fa-search me-2"></i> Filtrar Dados
+                    </button>
+                    <a href="{% url 'analise_dashboard' %}" class="btn btn-secondary-custom">
+                        <i class="fas fa-undo me-2"></i> Limpar Filtro
+                    </a>
+                </div>
             </div>
-            <div class="card-body">{{ analise_escola|safe }}</div>
+        </form>
+    </div>
+    
+    <hr class="mt-5 mb-5"/>
+
+    {% if erro %}
+    <div class="alert alert-danger">{{ erro }}</div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">
+                    {% if titulo_sufixo != " - Visão Geral" %}
+                        Registros da Escola
+                    {% else %}
+                        Registros por Escola
+                    {% endif %}
+                </div>
+                <div class="card-body">{{ analise_escola|safe }}</div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">Outro Gráfico/Tabela</div>
+                <div class="card-body">
+                    <p class="text-muted">Espaço para outros dados de análise.</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">Média do IDEB por Escola</div>
-            <div class="card-body">{{ media_ideb|safe }}</div>
-        </div>
-    </div>
+    {% endif %}
+
 </div>
-{% endif %} 
-{% endblock %}
+{% endblock content %}

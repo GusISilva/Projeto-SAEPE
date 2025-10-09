@@ -1,426 +1,115 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/visitas.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
-<style>
-    .visitas-container {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    .header-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-    }
-
-    .page-title {
-        font-size: 32px;
-        font-weight: 600;
-        color: #333;
-        margin: 0;
-    }
-
-    .page-subtitle {
-        color: #666;
-        margin-top: 5px;
-    }
-
-    .btn-add-visit {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .btn-add-visit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-        margin-bottom: 25px;
-    }
-
-    .card {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .card-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .visit-item {
-        padding: 15px;
-        border-bottom: 1px solid #f5f5f5;
-        transition: background 0.2s;
-    }
-
-    .visit-item:hover {
-        background: #f8f9ff;
-    }
-
-    .visit-item:last-child {
-        border-bottom: none;
-    }
-
-    .visit-school {
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 5px;
-    }
-
-    .visit-date {
-        font-size: 14px;
-        color: #666;
-    }
-
-    .visit-received-by {
-        font-size: 13px;
-        color: #999;
-        margin-top: 3px;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 40px;
-        color: #999;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        animation: fadeIn 0.3s;
-    }
-
-    .modal.active {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-        from {
-            transform: translateY(50px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    .modal-content {
-        background-color: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        max-height: 90vh;
-        overflow-y: auto;
-        animation: slideUp 0.3s;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-header {
-        padding: 25px;
-        border-bottom: 1px solid #f0f0f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .close-btn {
-        background: none;
-        border: none;
-        font-size: 28px;
-        color: #999;
-        cursor: pointer;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: background 0.2s;
-    }
-
-    .close-btn:hover {
-        background: #f5f5f5;
-        color: #333;
-    }
-
-    .modal-body {
-        padding: 25px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        color: #333;
-        font-weight: 500;
-        font-size: 14px;
-    }
-
-    .form-control, .form-select {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-
-    .form-control:focus, .form-select:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .search-box {
-        position: relative;
-        margin-bottom: 20px;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #999;
-    }
-
-    .search-input {
-        padding-left: 45px;
-    }
-
-    .modal-footer {
-        padding: 20px 25px;
-        border-top: 1px solid #f0f0f0;
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-    }
-
-    .btn-secondary {
-        background: #f5f5f5;
-        color: #666;
-    }
-
-    .btn-secondary:hover {
-        background: #e0e0e0;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .alert {
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .alert-success {
-        background: #d4edda;
-        color: #155724;
-        border-left: 4px solid #28a745;
-    }
-
-    .alert-danger {
-        background: #f8d7da;
-        color: #721c24;
-        border-left: 4px solid #dc3545;
-    }
-
-    @media (max-width: 768px) {
-        .cards-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .header-section {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-    }
-</style>
-
 <div class="visitas-container">
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-    {% endif %}
-
     <div class="header-section">
         <div>
-            <h1 class="page-title">Gestão de Visitas</h1>
-            <p class="page-subtitle">Registre e acompanhe as visitas às escolas do SAEPE</p>
+            <h1 class="page-title">Gestão de Visitações</h1>
+            <p class="page-subtitle">Acompanhe e registre todas as visitas realizadas às escolas.</p>
         </div>
         <button class="btn-add-visit" onclick="openModal()">
-            <span style="font-size: 20px;">+</span>
-            Adicionar Visita
+            <i class="fas fa-plus-circle"></i> Adicionar Nova Visita
         </button>
     </div>
 
-    <div class="cards-grid">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Escolas Visitadas ({{ visitas.count }})</h2>
-            </div>
-            <div class="visits-list">
-                {% if visitas %}
-                    {% for visita in visitas %}
-                    <div class="visit-item">
-                        <div class="visit-school">{{ visita.escola.nome }}</div>
-                        <div class="visit-date">📅 {{ visita.data_visita|date:"d/m/Y" }} {% if visita.hora_visita %}às {{ visita.hora_visita|time:"H:i" }}{% endif %}</div>
-                        <div class="visit-received-by">👤 Recebido por: {{ visita.recebido_por }}</div>
-                        {% if visita.objetivo %}
-                        <div class="visit-received-by">🎯 {{ visita.objetivo }}</div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">
-                        <div style="font-size: 48px; margin-bottom: 10px;">📋</div>
-                        <p>Nenhuma visita registrada ainda</p>
-                    </div>
-                {% endif %}
-            </div>
+    <div class="visits-card">
+        <div class="card-header">
+            <h3 class="card-title">Últimas Visitas Registradas</h3>
+            <input type="text" id="filterInput" class="search-bar" placeholder="Buscar por escola..." onkeyup="filterTable()">
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Escolas Pendentes ({{ escolas_pendentes.count }})</h2>
-            </div>
-            <div class="visits-list">
-                {% if escolas_pendentes %}
-                    {% for escola in escolas_pendentes %}
-                    <div class="visit-item">
-                        <div class="visit-school">{{ escola.nome }}</div>
-                        <div class="visit-date" style="color: #ff9800;">⚠️ Aguardando visita</div>
-                        <div class="visit-received-by">📍 {{ escola.cidade }}</div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">
-                        <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
-                        <p>Todas as escolas foram visitadas!</p>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+        <table class="visits-table">
+            <thead>
+                <tr>
+                    <th>Escola</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="visitsTableBody">
+                <tr>
+                    <td>EREM Padre Nilo Coelho</td>
+                    <td>21/Setembro/2024</td>
+                    <td><span class="status-badge completed">Concluída</span></td>
+                    <td class="action-links">
+                        <a href="#">Ver Detalhes</a>
+                        <a href="#">Editar</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Escola Estadual João Bezerra</td>
+                    <td>22/Setembro/2024</td>
+                    <td><span class="status-badge pending">Pendente</span></td>
+                    <td class="action-links">
+                        <a href="#">Ver Detalhes</a>
+                        <a href="#">Editar</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ETE Cícero Dias</td>
+                    <td>23/Setembro/2024</td>
+                    <td><span class="status-badge in-progress">Em Andamento</span></td>
+                    <td class="action-links">
+                        <a href="#">Ver Detalhes</a>
+                        <a href="#">Editar</a>
+                    </td>
+                </tr>
+                </tbody>
+        </table>
     </div>
 </div>
 
-<div id="visitModal" class="modal">
+<div id="visitModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Registrar Nova Visita</h2>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h5 class="modal-title">Registrar Nova Visita</h5>
+            <button type="button" class="close-button" onclick="closeModal()">×</button>
         </div>
-        <form method="POST" action="{% url 'visitas' %}">
+        <form method="POST">
             {% csrf_token %}
             <div class="modal-body">
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Por favor, corrija os erros abaixo.
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
                 <div class="form-group">
-                    <label for="{{ form.escola.id_for_label }}">{{ form.escola.label }}</label>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="schoolSearch" class="form-control search-input" placeholder="Pesquisar escola..." onkeyup="filterSchools()">
+                    <label for="{{ form.escola.id_for_label }}">Escola*</label>
+                    <div class="school-filter-container">
+                        <input type="text" id="schoolSearch" placeholder="Digite para buscar a escola..." onkeyup="filterSchools()">
                     </div>
                     {{ form.escola }}
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.recebido_por.id_for_label }}">{{ form.recebido_por.label }}</label>
-                    {{ form.recebido_por }}
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label for="{{ form.data_visita.id_for_label }}">{{ form.data_visita.label }}</label>
-                        {{ form.data_visita }}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.hora_visita.id_for_label }}">{{ form.hora_visita.label }}</label>
-                        {{ form.hora_visita }}
-                    </div>
+                    <label for="{{ form.data_visita.id_for_label }}">Data da Visita*</label>
+                    {{ form.data_visita }}
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.objetivo.id_for_label }}">{{ form.objetivo.label }}</label>
-                    {{ form.objetivo }}
+                    <label for="{{ form.status.id_for_label }}">Status</label>
+                    {{ form.status }}
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.observacoes.id_for_label }}">{{ form.observacoes.label }}</label>
+                    <label for="{{ form.observacoes.id_for_label }}">Observações</label>
                     {{ form.observacoes }}
                 </div>
             </div>
@@ -434,6 +123,15 @@
 </div>
 
 <script>
+    // Se houver erros no formulário (Django), o modal deve abrir automaticamente.
+    // Isso é útil após uma tentativa de envio com falha.
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasErrors = document.querySelector('.alert-danger');
+        if (hasErrors) {
+            openModal();
+        }
+    });
+
     function openModal() {
         document.getElementById('visitModal').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -466,9 +164,24 @@
         }
     }
 
-    {% if form.errors %}
-        openModal();
-    {% endif %}
+    function filterTable() {
+        const input = document.getElementById('filterInput');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('visitsTableBody');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const schoolName = rows[i].getElementsByTagName('td')[0];
+            if (schoolName) {
+                const textValue = schoolName.textContent || schoolName.innerText;
+                if (textValue.toLowerCase().indexOf(filter) > -1) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    }
 </script>
 
-{% endblock %}
+{% endblock content %}

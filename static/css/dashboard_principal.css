@@ -1,0 +1,93 @@
+.text-primary-emphasis { color: #052c65 !important; }
+.text-primary-subtle { color: #a0c3ff !important; opacity: 0.5; }
+.text-success-subtle { color: #b7e4c7 !important; opacity: 0.5; }
+.text-warning-subtle { color: #ffe59c !important; opacity: 0.5; }
+.text-info-subtle { color: #a4e4f7 !important; opacity: 0.5; }
+.text-xs { font-size: 0.75rem; letter-spacing: 0.5px; }
+
+
+
+.metric-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    
+    border-left: 5px solid transparent; 
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.border-primary-start { border-left-color: var(--bs-primary) !important; }
+.border-success-start { border-left-color: var(--bs-success) !important; }
+.border-warning-start { border-left-color: var(--bs-warning) !important; }
+.border-info-start { border-left-color: var(--bs-info) !important; }
+
+
+
+.action-card {
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+
+.action-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.action-card .card-body {
+    position: relative;
+    z-index: 2;
+}
+
+
+.action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.9; 
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+
+.card-data-analysis::before {
+    
+    background: linear-gradient(135deg, #1f4068 0%, #162447 100%); 
+}
+
+.card-report-register::before {
+   
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); 
+}
+
+.card-visit-management::before {
+   
+    background: linear-gradient(135deg, #00994d 0%, #007f3f 100%); 
+}
+
+
+.action-card .card-title, 
+.action-card .card-text {
+    color: white !important;
+}
+
+.action-card .card-text {
+    min-height: 40px; 
+    color: rgba(255, 255, 255, 0.7) !important; 
+}
+
+.action-card .btn-light {
+    border-radius: 20px;
+    font-weight: 600;
+}

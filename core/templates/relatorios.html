@@ -4,470 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visitações - School DASH</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f7f8fc;
-            color: #333;
-        }
-
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: white;
-            padding: 30px 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 40px;
-            color: #667eea;
-        }
-
-        .logo span {
-            font-weight: 300;
-            color: #999;
-        }
-
-        .menu-item {
-            padding: 12px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #666;
-            transition: all 0.3s;
-        }
-
-        .menu-item:hover {
-            background: #f0f2ff;
-            color: #667eea;
-        }
-
-        .menu-item.active {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 30px 40px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .breadcrumb {
-            font-size: 13px;
-            color: #999;
-            margin-bottom: 5px;
-        }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .search-box {
-            padding: 10px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            width: 250px;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        /* Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .card-menu {
-            cursor: pointer;
-            color: #999;
-        }
-
-        /* Table */
-        .data-table {
-            width: 100%;
-        }
-
-        .table-header {
-            display: flex;
-            gap: 15px;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 13px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        .table-row {
-            display: flex;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid #f8f8f8;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .table-row:hover {
-            background: #f8f9ff;
-        }
-
-        .col-checkbox {
-            width: 40px;
-        }
-
-        .col-name {
-            flex: 2;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .col-percentage {
-            flex: 1;
-            color: #666;
-        }
-
-        .col-number {
-            flex: 1;
-            color: #666;
-        }
-
-        .col-date {
-            flex: 1;
-            color: #999;
-            font-size: 13px;
-        }
-
-        .col-stars {
-            width: 80px;
-            display: flex;
-            gap: 3px;
-        }
-
-        .star {
-            width: 16px;
-            height: 16px;
-            background: #f0f0f0;
-            border-radius: 50%;
-        }
-
-        .star.filled {
-            background: #ffd700;
-        }
-
-        .alert-dot {
-            width: 6px;
-            height: 6px;
-            background: #ff4444;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.3;
-        }
-
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .fab:hover {
-            transform: scale(1.1);
-        }
-
-        .fab-tooltip {
-            position: absolute;
-            left: 80px;
-            background: #333;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .fab:hover .fab-tooltip {
-            opacity: 1;
-        }
-
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #999;
-        }
-
-        @media (max-width: 1024px) {
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
-                <div class="menu-item active">
-                    <span>📊</span> Dashboard
-                </div>
-                <div class="menu-item">
-                    <span>👤</span> Perfil
-                </div>
-                <div class="menu-item">
-                    <span>🔐</span> Sair
-                </div>
-            </nav>
+            <div class="logo">School <span>DASH</span></div>
+            <a href="{% url 'main_dashboard' %}" class="menu-item">
+                <i class="fas fa-home"></i> Dashboard Principal
+            </a>
+            <a href="{% url 'analise_dashboard' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i> Análise de Dados
+            </a>
+            <a href="{% url 'visitas' %}" class="menu-item">
+                <i class="fas fa-calendar-alt"></i> Gestão de Visitas
+            </a>
+            <a href="{% url 'relatorios' %}" class="menu-item active">
+                <i class="fas fa-clipboard-list"></i> Registrar Relatório
+            </a>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <div>
-                    <h1 class="page-title">Visitações</h1>
+            <header class="header">
+                <h1 class="header-title">Relatórios de Visitas</h1>
+                <div class="profile-icon">
+                    <i class="fas fa-user"></i>
                 </div>
-                <div class="header-actions">
-                    <input type="text" class="search-box" placeholder="🔍 Pesquisar escola">
+            </header>
 
-                    <div class="user-avatar">A</div>
-                </div>
-            </div>
-
-            <!-- Cards Grid -->
-            <div class="cards-grid">
-                <!-- Escolas Visitadas Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">Escolas visitadas</h2>
-                        <span class="card-menu">⋮</span>
-                    </div>
-                    <div class="data-table">
-                        <div class="table-header">
-                        
-                            <div class="col-name">Nome</div>
-                            <div class="col-date">Data da última visita</div>
-                        </div>
-                        <div class="table-row">
-                            
-                            <div class="col-name">Liceu de Artes e Oficios</div>
-                            <div class="col-date">12/Agosto/2025</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="col-name">EREM Sizenando Silveira</div>
-                            <div class="col-date">25/Agosto/2025</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="col-name">EREM Nobrega</div>
-                            <div class="col-date">27/Agosto/2025</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="col-name">EREM Ginasio Pernambucano</div>
-                          
-                            <div class="col-date">30/Agosto/2025</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="col-name">EREM Luiz Delgado</div>
-                            
-                            <div class="col-date">12/Setembro/2025</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="col-name">EREM Oliveira Lima</div>
-                            <div class="col-date">21/Setembro/2025</div>
-                        </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Relatórios Recentes</h2>
+                    <div class="header-actions">
+                        <button class="btn-action"><i class="fas fa-upload"></i> Exportar</button>
+                        <button class="btn-action"><i class="fas fa-trash-alt"></i> Excluir</button>
                     </div>
                 </div>
 
+                <div class="table-controls">
+                    <div class="control-item">
+                        <label for="search">Pesquisar:</label>
+                        <input type="text" id="search" class="search-input" placeholder="Buscar relatório...">
+                    </div>
+                    <div class="control-item">
+                        <label for="sort">Ordenar por:</label>
+                        <select id="sort" class="search-input" style="width: 150px;">
+                            <option>Data (Mais Recente)</option>
+                            <option>Nome (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
 
-              
-                <div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Falta visitar</h2>
-        <span class="card-menu">⋮</span>
-    </div>
-    <div class="data-table">
-        <div class="table-header">
-            <div class="col-checkbox">
-                
+                <div class="table-content">
+                    <div class="table-head">
+                        <div class="col-checkbox"></div>
+                        <div class="col-name">NOME DA ESCOLA</div>
+                        <div class="col-date">DATA DA VISITA</div>
+                    </div>
+
+                    <div class="table-row">
+                        <div class="col-checkbox">
+                            <input type="checkbox">
+                        </div>
+                        <div class="col-name">EREM Padre Nilo Coelho</div>
+                        <div class="col-date">21/Setembro/2024</div>
+                    </div>
+
+                    <div class="table-row">
+                        <div class="col-checkbox">
+                            <input type="checkbox">
+                        </div>
+                        <div class="col-name">Escola Estadual João Bezerra</div>
+                        <div class="col-date">21/Setembro/2024</div>
+                    </div>
+
+                    <div class="table-row">
+                        <div class="col-checkbox">
+                            <input type="checkbox">
+                        </div>
+                        <div class="col-name">ETE Cícero Dias</div>
+                        <div class="col-date">21/Setembro/2024</div>
+                    </div>
+                </div>
             </div>
-            <div class="col-name">Escola</div>
-            <div class="col-date">Data da Última Visita</div>
-        </div>
 
-        <div class="table-row">
-            <div class="col-checkbox">
-                <input type="checkbox">
-            </div>
-            <div class="col-name">Colégio da Polícia Militar de Pernambuco</div>
-            <div class="col-date">21/Setembro/2024</div>
-        </div>
-
-        <div class="table-row">
-            <div class="col-checkbox">
-                <input type="checkbox">
-            </div>
-            <div class="col-name">Escola Estadual Silva Jardim</div>
-            <div class="col-date">21/Setembro/2024</div>
-        </div>
-
-        <div class="table-row">
-            <div class="col-checkbox">
-                <input type="checkbox">
-            </div>
-            <div class="col-name">EREM Padre Nilo Coelho</div>
-            <div class="col-date">21/Setembro/2024</div>
-        </div>
-
-        <div class="table-row">
-            <div class="col-checkbox">
-                <input type="checkbox">
-            </div>
-            <div class="col-name">Escola Estadual João Bezerra</div>
-            <div class="col-date">21/Setembro/2024</div>
-        </div>
-
-        <div class="table-row">
-            <div class="col-checkbox">
-                <input type="checkbox">
-            </div>
-            <div class="col-name">ETE Cícero Dias</div>
-            <div class="col-date">21/Setembro/2024</div>
-        
-        </div>
-    </div>
-</div>
-
-            <!-- Footer -->
             <div class="footer">
                 <div>© 2021 Horizon UI. All Rights Reserved. Made with love by Simmmple!</div>
                 <div>
-                   <a href="#" style="margin: 0 10px; color: #667eea; text-decoration: none;">Licenças</a>
-                    <a href="#" style="margin: 0 10px; color: #667eea; text-decoration: none;">Termos de uso</a>
+                   <a href="#" style="margin: 0 10px;">Licenças</a>
+                    <a href="#" style="margin: 0 10px;">Termos de uso</a>
                 </div>
             </div>
         </main>
-    </div>
-
-    <!-- Floating Action Button -->
-    <div class="fab">
-        💬
-        <div class="fab-tooltip">Upgrade to PRO<br>to get access to all features!</div>
     </div>
 </body>
 </html>
