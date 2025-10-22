@@ -1,17 +1,16 @@
 # core/forms.py
 
 from django import forms
-# Importa o modelo de Visita (assumindo que ele está em models.py) e o modelo Escola
-from .models import Visita, Escola 
+# IMPORTANTE: Importamos os DOIS modelos de escola
+from .models import Visita, Escola, DadosFicticiosEscola 
 
 # ----------------------------------------------------
-# 1. VISITA FORM (Seu formulário de registro original)
+# 1. VISITA FORM (DEIXAMOS INTACTO, pois ele usa o model 'Escola' antigo)
 # ----------------------------------------------------
 class VisitaForm(forms.ModelForm):
     class Meta:
         model = Visita
         fields = ['escola', 'recebido_por', 'data_visita', 'hora_visita', 'objetivo', 'observacoes']
-        # ... (restante do seu código VisitaForm) ...
         widgets = {
             'escola': forms.Select(attrs={
                 'class': 'form-control',
@@ -51,13 +50,27 @@ class VisitaForm(forms.ModelForm):
         }
 
 # ----------------------------------------------------
-# 2. ESCOLA SELECT FORM (O NOVO formulário de filtro)
+# 2. ESCOLA SELECT FORM (CORRIGIDO para usar os dados da planilha)
 # ----------------------------------------------------
 class EscolaSelectForm(forms.Form):
-    escola = forms.ModelChoiceField(
-        queryset=Escola.objects.all().order_by('nome'), 
-        empty_label="--- Todas as Escolas ---",
-        label="Filtrar por Escola",
+    
+    # 1. Busca os nomes das escolas no NOVO banco de dados (DadosFicticiosEscola)
+    lista_de_escolas = list(
+        DadosFicticiosEscola.objects.values_list('escola', 'escola') # (valor, texto_exibido)
+                                   .distinct()                 # Garante que cada escola apareça só 1 vez
+                                   .order_by('escola')         # Ordem alfabética
+    )
+    
+    # 2. Adiciona a opção "Todas as Escolas" no começo
+    ESCOLAS_CHOICES = [
+        ('', 'Todas as Escolas (Visão Geral)') # O valor '' significa "nenhum filtro"
+    ] + lista_de_escolas
+
+    # 3. Cria o campo do formulário
+    escola = forms.ChoiceField(
+        choices=ESCOLAS_CHOICES, # Usa nossa lista dinâmica
         required=False,
+        label="Filtrar por Escola",
+        # Isso adiciona a classe CSS do Bootstrap para ficar bonito
         widget=forms.Select(attrs={'class': 'form-select'}) 
     )

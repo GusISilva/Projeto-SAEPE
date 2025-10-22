@@ -20,7 +20,6 @@
         <h3 class="card-filter-title mb-3"><i class="fas fa-filter me-2"></i> Filtro por Escola</h3>
         <form method="GET" class="filter-form">
             <div class="row align-items-end">
-                
                 <div class="col-md-6 col-lg-5 mb-3 mb-md-0">
                     <label class="form-label fw-semibold" for="{{ form.escola.id_for_label }}">{{ form.escola.label }}</label>
                     <div class="input-group">
@@ -28,7 +27,6 @@
                         {{ form.escola }}
                     </div>
                 </div>
-
                 <div class="col-md-6 col-lg-7 d-flex justify-content-end gap-3">
                     <button type="submit" class="btn btn-primary-custom">
                         <i class="fas fa-search me-2"></i> Filtrar Dados
@@ -40,33 +38,112 @@
             </div>
         </form>
     </div>
+
+    <h2>Proficiência em Matemática (SAEPE 2023)</h2>
+    <hr>
+    <div style="width: 90%; max-width: 1000px; margin: auto;">
+        <canvas id="meuGraficoBarras"></canvas> </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+    // Pega os dados JSON que o Python (views.py) enviou
+    const dadosJson = '{{ dados_grafico_json|safe }}';
     
+</script>
+    
+<hr class="mt-5 mb-5"/>
+
+
+
+
+    <script>
+        // Pega os dados JSON que o Python (views.py) enviou
+        const dadosJson = '{{ dados_grafico_json|safe }}';
+
+        // Verifica se os dados existem
+        if (dadosJson && dadosJson !== '[]') {
+            
+            const dadosDoBackend = JSON.parse(dadosJson);
+
+            if (dadosDoBackend.length > 0) {
+                
+                // Prepara os dados para o Chart.js
+                const labels = dadosDoBackend.map(item => item.escola);
+                const data = dadosDoBackend.map(item => item.proficiencia_mt_2023); // <-- nome do models.py
+
+                // Configuração do Gráfico de barras
+                const config = {
+                    type: 'bar', // Tipo de gráfico
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Proficiência em Matemática 2023',
+                            data: data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        // Isso faz o gráfico ficar deitadinho
+                        indexAxis: 'y', 
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Proficiência de MT por Escola'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Proficiência Média' }
+                            }
+                        }
+                    }
+                };
+
+                // Cria o gráfico
+                const ctx = document.getElementById('meuGraficoBarras').getContext('2d');
+                new Chart(ctx, config);
+            }
+        }
+    </script>
+        
     <hr class="mt-5 mb-5"/>
 
     {% if erro %}
     <div class="alert alert-danger">{{ erro }}</div>
     {% else %}
     <div class="row">
+        
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-white fw-bold">
                     {% if titulo_sufixo != " - Visão Geral" %}
                         Registros da Escola
                     {% else %}
-                        Registros por Escola
+                        Comparativo SAEPE
                     {% endif %}
                 </div>
                 <div class="card-body">{{ analise_escola|safe }}</div>
             </div>
         </div>
+
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">Outro Gráfico/Tabela</div>
+                <div class="card-header bg-white fw-bold">
+                    Comparativo Proficiência 2023
+                </div>
                 <div class="card-body">
-                    <p class="text-muted">Espaço para outros dados de análise.</p>
+                    {{ media_ideb|safe }}
                 </div>
             </div>
         </div>
+
     </div>
     {% endif %}
 

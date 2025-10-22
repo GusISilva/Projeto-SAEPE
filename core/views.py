@@ -1,6 +1,7 @@
 # core/views.py
 
 import pandas as pd
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -14,8 +15,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import Escola, Ocorrencia, Relatorio, Visita
-# V2: Importe os dois formulários necessários
+from .models import Escola, Ocorrencia, Relatorio, Visita, DadosFicticiosEscola# V2: Importe os dois formulários necessários
 from .forms import VisitaForm, EscolaSelectForm 
 
 
@@ -70,22 +70,6 @@ def main_dashboard_view(request):
     return render(request, 'main_dashboard.html')
 
 @login_required(login_url='login')
-def analise_dashboard_view(request):
-    context = {}
-    try:
-        df = pd.read_excel('dados_escolas.xlsx')
-        analise_escola = df['Escola'].value_counts().to_frame().to_html(classes='table table-striped')
-        media_ideb = df.groupby('Escola')['IDEB'].mean().to_frame().to_html(classes='table table-striped')
-        context = {
-            'analise_escola': analise_escola,
-            'media_ideb': media_ideb,
-        }
-    except Exception as e:
-        context['erro'] = f"Ocorreu um erro: {e}"
-
-    return render(request, 'analise_dashboard.html', context)
-
-@login_required(login_url='login')
 def relatorios_view(request):
     if request.method == 'POST':
         escola_id = request.POST.get('escola')
@@ -108,7 +92,6 @@ def relatorios_view(request):
         }
         return render(request, 'relatorios.html', context)
 
-# NOVA VIEW: Gerenciar Visitas
 @login_required(login_url='login')
 def visitas_view(request):
     if request.method == 'POST':
@@ -150,7 +133,7 @@ def visitas_view(request):
     
     return render(request, 'visitas.html', context)
 
-# VIEW RENOMEADA: O antigo dashboard agora é o dashboard de análise
+
 @login_required(login_url='login')
 def analise_dashboard_view(request):
     
@@ -159,61 +142,57 @@ def analise_dashboard_view(request):
     titulo_sufixo = " - Visão Geral"
     
     if form.is_valid():
-        escola_obj = form.cleaned_data.get('escola')
-        if escola_obj:
-            escola_nome_filtro = escola_obj.nome 
-            titulo_sufixo = f" - {escola_obj.nome}"
+        escola_nome_filtro = form.cleaned_data.get('escola')
+        
+        if escola_nome_filtro:
+            titulo_sufixo = f" - {escola_nome_filtro}"
+        else:
+            escola_nome_filtro = None 
+            titulo_sufixo = " - Visão Geral"
             
-    # Valores padrões para evitar erro de variável não definida
-    analise_escola = "Dados de registros não disponíveis."
-    media_ideb = "Dados de IDEB não disponíveis."
     erro = None
     
-    # ----------------------------------------------------
-    # BLOCO TRY/EXCEPT PARA LIDAR COM O ARQUIVO FALTANTE
-    # ----------------------------------------------------
     try:
-        # Tenta ler o arquivo (Ajuste o caminho se necessário!)
-        df = pd.read_excel('dados_escolas.xlsx')
-        
-        # 1. Aplicar a Filtragem no DataFrame
+        base_query = DadosFicticiosEscola.objects.all()
+
         if escola_nome_filtro:
-            df_filtrado = df[df['Escola'] == escola_nome_filtro]
-        else:
-            df_filtrado = df
+            base_query = base_query.filter(escola=escola_nome_filtro)
 
-        # 2. Gerar as Análises com o DataFrame Filtrado
+        dados_para_grafico = base_query.values(
+            'escola', 
+            'proficiencia_mt_2023' 
+        ).order_by('-proficiencia_mt_2023') 
         
-        # Lógica de Registros
-        if escola_nome_filtro:
-             # Exibe a contagem total de registros para a escola
-             contagem_registros = pd.Series({'Total de Registros': len(df_filtrado)}).to_frame().to_html(classes='table table-striped')
-        else:
-             # Visão Geral: Contagem por todas as escolas
-             contagem_registros = df_filtrado['Escola'].value_counts().to_frame().to_html(classes='table table-striped')
+        dados_grafico_json = json.dumps(list(dados_para_grafico))
 
-        # Lógica de Média IDEB
-        media_ideb_data = df_filtrado.groupby('Escola')['IDEB'].mean().to_frame().to_html(classes='table table-striped', header=['Média do IDEB'])
+        df_tabela_1 = pd.DataFrame(list(
+            base_query.values('escola', 'saepe_2022', 'saepe_2023')
+        ))
+        df_tabela_1.columns = ['Escola', 'SAEPE 2022', 'SAEPE 2023']
+        tabela_1_html = df_tabela_1.to_html(classes='table table-striped', index=False)
+        
+        df_tabela_2 = pd.DataFrame(list(
+            base_query.values('escola', 'proficiencia_lp_2023', 'proficiencia_mt_2023')
+        ))
+        df_tabela_2.columns = ['Escola', 'Proficiência LP 2023', 'Proficiência MT 2023']
+        tabela_2_html = df_tabela_2.to_html(classes='table table-striped', index=False)
 
-        # Atualiza as variáveis de contexto se o arquivo foi lido com sucesso
-        analise_escola = contagem_registros
-        media_ideb = media_ideb_data
-        
-    except FileNotFoundError:
-        # Se o arquivo não existir, exibe uma mensagem de erro na tela
-        erro = "Arquivo de dados 'dados_escolas.xlsx' não encontrado. Gráficos de análise não puderam ser gerados."
-        
     except Exception as e:
-        # Lida com outros erros (ex: Pandas não conseguiu processar o XLSX)
-        erro = f"Ocorreu um erro ao processar os dados: {e}"
+        erro = f"Ocorreu um erro ao consultar os dados: {e}"
+        dados_grafico_json = '[]'
+        tabela_1_html = "<p>Não foi possível carregar os dados.</p>"
+        tabela_2_html = "<p>Não foi possível carregar os dados.</p>"
 
-    # Monta o contexto final
+
     context = {
         'form': form, 
-        'analise_escola': analise_escola,
-        'media_ideb': media_ideb,
         'titulo_sufixo': titulo_sufixo,
         'erro': erro,
+        
+        'dados_grafico_json': dados_grafico_json,
+        
+        'analise_escola': tabela_1_html,
+        'media_ideb': tabela_2_html, 
     }
     
     return render(request, 'analise_dashboard.html', context)
