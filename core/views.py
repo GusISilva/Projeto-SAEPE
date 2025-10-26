@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
 from django.utils.html import format_html
+from django.db.models import Max
 
 from .models import Escola, Ocorrencia, Relatorio, Visita, DadosFicticiosEscola, VisitaTecnica
 from .forms import VisitaForm, EscolaSelectForm, VisitaTecnicaForm
@@ -84,33 +85,62 @@ def relatorios_view(request):
 
 @login_required(login_url='login')
 def visitas_view(request):
-    
+
+    # --- Lógica de POST (Processa o formulário do popup - SEM ALTERAÇÕES) ---
     if request.method == 'POST':
         form = VisitaTecnicaForm(request.POST)
         if form.is_valid():
             try:
                 form.save()
                 messages.success(request, 'Visita registada com sucesso!')
-                return redirect('visitas') # Volta para a mesma página
+                return redirect('visitas')
             except Exception as e:
                  messages.error(request, f'Erro inesperado ao guardar a visita: {e}')
         else:
             error_message = 'Erro ao guardar. Por favor, verifique os dados: '
             for field, errors in form.errors.items():
-                error_message += f"{field}: {', '.join(errors)} "
-            messages.error(request, error_message)
-           
-    
-    todas_visitas = VisitaTecnica.objects.all().order_by('-data_visita') 
-    
-    form_modal = VisitaTecnicaForm() 
-    
+                label = form.fields[field].label if field in form.fields else field
+                error_message += f"'{label}': {', '.join(errors)} "
+            messages.error(request, error_message.strip())
+            # Continua para a lógica GET para mostrar a página com o erro
+
+    # --- Lógica de GET (MODIFICADA para mostrar o resumo) ---
+
+    # 1. Encontra a data da última visita para cada escola (como antes)
+    ultimas_visitas_por_escola = VisitaTecnica.objects.values(
+        'escola' 
+    ).annotate(
+        ultima_data=Max('data_visita') 
+    ) # Removemos o order_by daqui
+
+    # 2. Busca os detalhes completos da última visita de cada escola (como antes)
+    lista_resumo_visitas = []
+    for item in ultimas_visitas_por_escola:
+        try:
+            ultima_visita_obj = VisitaTecnica.objects.filter(
+                escola=item['escola'],
+                data_visita=item['ultima_data']
+            ).latest('id') 
+            lista_resumo_visitas.append(ultima_visita_obj)
+        except VisitaTecnica.DoesNotExist:
+            continue
+            
+    # --- A MUDANÇA ESTÁ AQUI ---
+    # 3. Ordena a LISTA de objetos pelo atributo 'escola' (alfabeticamente)
+    lista_resumo_visitas.sort(key=lambda visita: visita.escola)
+    # --- FIM DA MUDANÇA ---
+
+    # 4. Cria uma instância VAZIA do formulário para o popup (Sem alterações)
+    form_modal = VisitaTecnicaForm()
+
+    # 5. Monta o contexto para o template (Sem alterações)
     context = {
-        'form_modal': form_modal,       
-        'visitas': todas_visitas,      
+        'form_modal': form_modal,           
+        'resumo_visitas': lista_resumo_visitas, # Agora a lista está ordenada por escola
     }
-    
-    return render(request, 'visitas.html', context) # Renderiza o seu template original
+
+    # Renderiza o seu template 'visitas.html' (Sem alterações)
+    return render(request, 'visitas.html', context)
 
 
 

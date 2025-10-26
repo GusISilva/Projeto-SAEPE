@@ -101,7 +101,8 @@ class VisitaTecnicaForm(forms.ModelForm):
     )
     data_visita = forms.DateField(
         label="Data da Visita",
-        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        required=False # <--- ADICIONE ESTA LINHA
     )
     tecnico_gre = forms.ChoiceField(
         label="Técnico/Analista - GRE",
