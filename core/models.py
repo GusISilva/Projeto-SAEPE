@@ -67,3 +67,21 @@ class DadosFicticiosEscola(models.Model):
 
     def __str__(self):
         return self.escola
+
+
+# NOSSO NOVO MODELO PARA AS VISITAS TÉCNICAS
+class VisitaTecnica(models.Model):
+    # Usamos os nomes da sua planilha, mas em formato Python
+    # (minúsculas, sem espaços, sem acentos)
+    
+    escola = models.CharField(max_length=255)
+    data_visita = models.DateField(null=True, blank=True) # Melhor tipo para datas
+    tecnico_gre = models.CharField(max_length=255, null=True, blank=True)
+    servidor_escola = models.CharField(max_length=255, null=True, blank=True)
+    demanda = models.TextField(null=True, blank=True) # TextField é melhor para textos longos
+    encaminhamento = models.TextField(null=True, blank=True)
+    observacao = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        # Isto é o que vai aparecer no painel de admin do Django
+        return f"Visita em {self.escola} ({self.data_visita})"

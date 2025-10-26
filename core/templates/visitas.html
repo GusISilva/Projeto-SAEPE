@@ -2,186 +2,172 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/visitas.css' %}">
-{% endblock extra_css %}
+<link rel="stylesheet" href="{% static 'css/visitas.css' %}"> {% endblock extra_css %}
 
 {% block content %}
-<div class="visitas-container">
-    <div class="header-section">
+<div class="visitas-container my-5"> <div class="header-section d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="page-title">Gestão de Visitações</h1>
-            <p class="page-subtitle">Acompanhe e registre todas as visitas realizadas às escolas.</p>
+            <h1 class="page-title">Gestão de Visitas Técnicas</h1>
+            <p class="page-subtitle">Acompanhe e registe todas as visitas realizadas.</p>
         </div>
-        <button class="btn-add-visit" onclick="openModal()">
+        <button type="button" class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#visitModal">
             <i class="fas fa-plus-circle"></i> Adicionar Nova Visita
         </button>
     </div>
 
-    <div class="visits-card">
-        <div class="card-header">
-            <h3 class="card-title">Últimas Visitas Registradas</h3>
-            <input type="text" id="filterInput" class="search-bar" placeholder="Buscar por escola..." onkeyup="filterTable()">
+    <div class="visits-card card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Histórico de Visitas</h3>
+            <input type="text" id="filterInput" class="form-control w-auto search-bar" placeholder="Buscar por escola..." onkeyup="filterTable()">
         </div>
 
-        <table class="visits-table">
-            <thead>
-                <tr>
-                    <th>Escola</th>
-                    <th>Data</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="visitsTableBody">
-                <tr>
-                    <td>EREM Padre Nilo Coelho</td>
-                    <td>21/Setembro/2024</td>
-                    <td><span class="status-badge completed">Concluída</span></td>
-                    <td class="action-links">
-                        <a href="#">Ver Detalhes</a>
-                        <a href="#">Editar</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Escola Estadual João Bezerra</td>
-                    <td>22/Setembro/2024</td>
-                    <td><span class="status-badge pending">Pendente</span></td>
-                    <td class="action-links">
-                        <a href="#">Ver Detalhes</a>
-                        <a href="#">Editar</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>ETE Cícero Dias</td>
-                    <td>23/Setembro/2024</td>
-                    <td><span class="status-badge in-progress">Em Andamento</span></td>
-                    <td class="action-links">
-                        <a href="#">Ver Detalhes</a>
-                        <a href="#">Editar</a>
-                    </td>
-                </tr>
-                </tbody>
-        </table>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="visits-table table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Escola</th>
+                            <th>Data</th>
+                            <th>Técnico/Analista</th>
+                            <th>Servidor Escola</th>
+                            <th>Demanda</th>
+                            <th>Ações</th> </tr>
+                    </thead>
+                    <tbody id="visitsTableBody">
+                        {% for visita in visitas %} <tr>
+                            <td>
+                                <a href="{% url 'perfil_escola' escola_nome=visita.escola %}">
+                                    {{ visita.escola }}
+                                </a>
+                            </td>
+                            <td>{{ visita.data_visita|date:"d/m/Y" }}</td>
+                            <td>{{ visita.tecnico_gre|default:"" }}</td>
+                            <td>{{ visita.servidor_escola|default:"" }}</td>
+                            <td>{{ visita.demanda|truncatewords:10|default:"" }}</td>
+                            <td class="action-links">
+                                <a href="{% url 'perfil_escola' escola_nome=visita.escola %}">
+                                    Ver Detalhes
+                                </a>
+                                </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Nenhuma visita registada ainda.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="visitModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Registrar Nova Visita</h5>
-            <button type="button" class="close-button" onclick="closeModal()">×</button>
-        </div>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="modal-body">
-                {% if form.errors %}
-                <div class="alert alert-danger">
-                    Por favor, corrija os erros abaixo.
-                    <ul>
-                        {% for field in form %}
-                            {% for error in field.errors %}
-                                <li>{{ field.label }}: {{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                        {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
+<div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <div class="modal-content">
 
-                <div class="form-group">
-                    <label for="{{ form.escola.id_for_label }}">Escola*</label>
-                    <div class="school-filter-container">
-                        <input type="text" id="schoolSearch" placeholder="Digite para buscar a escola..." onkeyup="filterSchools()">
+            <form action="{% url 'visitas' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="visitModalLabel">Registar Nova Visita Técnica</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if "error" in message.tags %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.escola.id_for_label }}">{{ form_modal.escola.label }}*</label>
+                            {{ form_modal.escola }}
+                        </div>
+                         <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.data_visita.id_for_label }}">{{ form_modal.data_visita.label }}*</label>
+                            {{ form_modal.data_visita }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.tecnico_gre.id_for_label }}">{{ form_modal.tecnico_gre.label }}*</label>
+                            {{ form_modal.tecnico_gre }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.servidor_escola.id_for_label }}">{{ form_modal.servidor_escola.label }}*</label>
+                            {{ form_modal.servidor_escola }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form_modal.demanda.id_for_label }}">{{ form_modal.demanda.label }}*</label>
+                            {{ form_modal.demanda }}
+                        </div>
+                         <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.encaminhamento.id_for_label }}">{{ form_modal.encaminhamento.label }}</label>
+                            {{ form_modal.encaminhamento }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form_modal.observacao.id_for_label }}">{{ form_modal.observacao.label }}</label>
+                            {{ form_modal.observacao }}
+                        </div>
                     </div>
-                    {{ form.escola }}
                 </div>
 
-                <div class="form-group">
-                    <label for="{{ form.data_visita.id_for_label }}">Data da Visita*</label>
-                    {{ form.data_visita }}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Visita</button>
                 </div>
 
-                <div class="form-group">
-                    <label for="{{ form.status.id_for_label }}">Status</label>
-                    {{ form.status }}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.observacoes.id_for_label }}">Observações</label>
-                    {{ form.observacoes }}
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Salvar Visita</button>
-            </div>
-        </form>
+            </form> </div>
     </div>
 </div>
 
 <script>
-    // Se houver erros no formulário (Django), o modal deve abrir automaticamente.
-    // Isso é útil após uma tentativa de envio com falha.
-    document.addEventListener('DOMContentLoaded', function() {
-        const hasErrors = document.querySelector('.alert-danger');
-        if (hasErrors) {
-            openModal();
-        }
-    });
-
-    function openModal() {
-        document.getElementById('visitModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-        document.getElementById('visitModal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('visitModal');
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
-
-    function filterSchools() {
-        const searchInput = document.getElementById('schoolSearch').value.toLowerCase();
-        const select = document.getElementById('{{ form.escola.id_for_label }}');
-        const options = select.getElementsByTagName('option');
-
-        for (let i = 0; i < options.length; i++) {
-            const optionText = options[i].text.toLowerCase();
-            if (optionText.includes(searchInput)) {
-                options[i].style.display = '';
-            } else {
-                options[i].style.display = 'none';
-            }
-        }
-    }
-
     function filterTable() {
         const input = document.getElementById('filterInput');
-        const filter = input.value.toLowerCase();
+        const filter = input ? input.value.toLowerCase() : ''; 
         const table = document.getElementById('visitsTableBody');
+        if (!table) return; 
         const rows = table.getElementsByTagName('tr');
 
         for (let i = 0; i < rows.length; i++) {
-            const schoolName = rows[i].getElementsByTagName('td')[0];
-            if (schoolName) {
-                const textValue = schoolName.textContent || schoolName.innerText;
-                if (textValue.toLowerCase().indexOf(filter) > -1) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
+            if (rows[i].getElementsByTagName('td').length > 0) {
+                const schoolNameCell = rows[i].getElementsByTagName('td')[0];
+                if (schoolNameCell) {
+                    const schoolLink = schoolNameCell.getElementsByTagName('a')[0];
+                    const textValue = schoolLink ? (schoolLink.textContent || schoolLink.innerText) : (schoolNameCell.textContent || schoolNameCell.innerText);
+                    
+                    if (textValue.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
                 }
             }
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorAlert = document.querySelector('#visitModal .modal-body .alert-danger'); 
+        const visitModalElement = document.getElementById('visitModal');
+        
+        if (errorAlert && visitModalElement && typeof bootstrap !== 'undefined') { 
+            const isModalHidden = !visitModalElement.classList.contains('show');
+            if (isModalHidden) {
+                try {
+                    const visitModal = bootstrap.Modal.getOrCreateInstance(visitModalElement); // Método seguro
+                    visitModal.show();
+                } catch (e) {
+                    console.error("Erro ao tentar reabrir o modal Bootstrap:", e);
+                }
+            }
+        }
+    });
+
 </script>
 
 {% endblock content %}

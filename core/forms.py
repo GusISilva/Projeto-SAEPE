@@ -1,12 +1,8 @@
 # core/forms.py
 
 from django import forms
-# IMPORTANTE: Importamos os DOIS modelos de escola
-from .models import Visita, Escola, DadosFicticiosEscola 
+from .models import Visita, Escola, DadosFicticiosEscola, VisitaTecnica
 
-# ----------------------------------------------------
-# 1. VISITA FORM (DEIXAMOS INTACTO, pois ele usa o model 'Escola' antigo)
-# ----------------------------------------------------
 class VisitaForm(forms.ModelForm):
     class Meta:
         model = Visita
@@ -49,9 +45,7 @@ class VisitaForm(forms.ModelForm):
             'observacoes': 'Observações'
         }
 
-# ----------------------------------------------------
-# 2. ESCOLA SELECT FORM (CORRIGIDO para usar os dados da planilha)
-# ----------------------------------------------------
+
 class EscolaSelectForm(forms.Form):
     
     # 1. Busca os nomes das escolas no NOVO banco de dados (DadosFicticiosEscola)
@@ -74,3 +68,67 @@ class EscolaSelectForm(forms.Form):
         # Isso adiciona a classe CSS do Bootstrap para ficar bonito
         widget=forms.Select(attrs={'class': 'form-select'}) 
     )
+
+# ----------------------------------------------------
+# 3. FORMULÁRIO PARA O POPUP DE VISITA TÉCNICA (NOVO)
+# ----------------------------------------------------
+class VisitaTecnicaForm(forms.ModelForm):
+
+    # 1. Vamos criar uma lista de ESCOLAS para o dropdown
+    # Buscamos do seu banco de dados de escolas (o do dashboard)
+    lista_escolas = list(
+        DadosFicticiosEscola.objects.values_list('escola', 'escola')
+                                   .distinct()
+                                   .order_by('escola')
+    )
+    ESCOLAS_CHOICES = [('', 'Selecione a escola...')] + lista_escolas
+
+    # 2. Vamos criar uma lista de TÉCNICOS para o dropdown
+    # Buscamos da própria tabela de visitas que acabámos de importar
+    lista_tecnicos = list(
+        VisitaTecnica.objects.values_list('tecnico_gre', 'tecnico_gre')
+                             .exclude(tecnico_gre=None) # Remove valores nulos
+                             .distinct()
+                             .order_by('tecnico_gre')
+    )
+    TECNICOS_CHOICES = [('', 'Selecione o técnico...')] + lista_tecnicos
+
+    # 3. Definimos os campos do formulário
+    escola = forms.ChoiceField(
+        label="Escola",
+        choices=ESCOLAS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    data_visita = forms.DateField(
+        label="Data da Visita",
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+    )
+    tecnico_gre = forms.ChoiceField(
+        label="Técnico/Analista - GRE",
+        choices=TECNICOS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    servidor_escola = forms.CharField(
+        label="Servidor da Escola",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    demanda = forms.CharField(
+        label="Demanda",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+    )
+    encaminhamento = forms.CharField(
+        label="Encaminhamento",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False # Este campo é opcional
+    )
+    observacao = forms.CharField(
+        label="Observação",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False # Este campo é opcional
+    )
+
+    class Meta:
+        model = VisitaTecnica  # O nosso "molde"
+        # Os campos do modelo que este formulário vai usar
+        fields = ['escola', 'data_visita', 'tecnico_gre', 'servidor_escola', 
+                  'demanda', 'encaminhamento', 'observacao']
