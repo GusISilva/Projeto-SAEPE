@@ -20,7 +20,6 @@
         <h3 class="card-filter-title mb-3"><i class="fas fa-filter me-2"></i> Filtro por Escola</h3>
         <form method="GET" class="filter-form">
             <div class="row align-items-end">
-                
                 <div class="col-md-6 col-lg-5 mb-3 mb-md-0">
                     <label class="form-label fw-semibold" for="{{ form.escola.id_for_label }}">{{ form.escola.label }}</label>
                     <div class="input-group">
@@ -28,42 +27,78 @@
                         {{ form.escola }}
                     </div>
                 </div>
-
-                <div class="col-md-6 col-lg-7 d-flex justify-content-end gap-3">
-                    <button type="submit" class="btn btn-primary-custom">
-                        <i class="fas fa-search me-2"></i> Filtrar Dados
-                    </button>
-                    <a href="{% url 'analise_dashboard' %}" class="btn btn-secondary-custom">
-                        <i class="fas fa-undo me-2"></i> Limpar Filtro
-                    </a>
+                <div class="col-md-6 col-lg-2">
+                    <button type="submit" class="btn btn-primary-custom w-100">Aplicar Filtro</button>
                 </div>
             </div>
         </form>
+    </div>
+
+    <div class="row mb-5">
+        
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Análise de Desempenho (SAEPE e Proficiência)
+                </div>
+                <div class="card-body">
+                    {% if dados_grafico_json != '{}' and dados_grafico_json != '[]' %}
+                        <canvas id="meuGraficoBarras"></canvas>
+                    {% else %}
+                        <p class="text-center text-muted mt-5">Nenhum dado de desempenho encontrado para esta seleção.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Visitas Técnicas por Analista
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    {% if dados_grafico_visitas_json != '{}' and dados_grafico_visitas_json != '[]' %}
+                        <canvas id="meuGraficoRosca" style="max-height: 300px;"></canvas>
+                    {% else %}
+                        <p class="text-center text-muted">Nenhuma visita técnica registrada.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
     </div>
     
     <hr class="mt-5 mb-5"/>
 
     {% if erro %}
-    <div class="alert alert-danger">{{ erro }}</div>
+    <div class="alert alert-danger">Ocorreu um erro: {{ erro }}</div>
     {% else %}
     <div class="row">
+        
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-white fw-bold">
                     {% if titulo_sufixo != " - Visão Geral" %}
-                        Registros da Escola
+                        Registros SAEPE da Escola
                     {% else %}
-                        Registros por Escola
+                        Comparativo SAEPE
                     {% endif %}
                 </div>
-                <div class="card-body">{{ analise_escola|safe }}</div>
+                <div class="card-body">
+                    {{ analise_escola|safe }}
+                </div>
             </div>
         </div>
+
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-bold">Outro Gráfico/Tabela</div>
+                <div class="card-header bg-white fw-bold">
+                    Comparativo Proficiência 2023
+                </div>
                 <div class="card-body">
-                    <p class="text-muted">Espaço para outros dados de análise.</p>
+                    {{ media_ideb|safe }}
                 </div>
             </div>
         </div>
@@ -71,4 +106,64 @@
     {% endif %}
 
 </div>
+
+<script>
+    // Carrega dados JSON do Django
+    const dadosGraficoJson = JSON.parse('{{ dados_grafico_json|escapejs }}');
+    const dadosVisitasJson = JSON.parse('{{ dados_grafico_visitas_json|escapejs }}');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializa o Gráfico de Barras (Desempenho)
+        if (dadosGraficoJson && dadosGraficoJson.datasets && dadosGraficoJson.datasets.length > 0) {
+            const configBarras = {
+                type: 'bar', // Tipo de gráfico: Barras
+                data: dadosGraficoJson,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top', },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Valor / Proficiência' }
+                        },
+                        x: {
+                            // Configurações específicas para o eixo X
+                            // (Opcional, depende do que você está mostrando)
+                        }
+                    }
+                }
+            };
+
+            const ctxBarras = document.getElementById('meuGraficoBarras');
+            if (ctxBarras) {
+                new Chart(ctxBarras.getContext('2d'), configBarras);
+            }
+        }
+        
+        // Inicializa o Gráfico de Rosca (Visitas por Técnico)
+        if (dadosVisitasJson && dadosVisitasJson.datasets && dadosVisitasJson.datasets.length > 0) {
+            const configRosca = {
+                type: 'doughnut', // Tipo de gráfico: Rosca
+                data: dadosVisitasJson,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Permite controlar o tamanho no CSS
+                    plugins: {
+                        legend: { position: 'right' },
+                        title: { display: false }
+                    }
+                }
+            };
+            
+            const ctxRosca = document.getElementById('meuGraficoRosca');
+            if (ctxRosca) {
+                new Chart(ctxRosca.getContext('2d'), configRosca);
+            }
+        }
+    });
+</script>
+
 {% endblock content %}

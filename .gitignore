@@ -1,0 +1,9 @@
+# Pasta do Ambiente Virtual (MUITO IMPORTANTE)
+venv/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Arquivos de IDE (como o VS Code)
+.vscode/

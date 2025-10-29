@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="page-title">{{ escola_info.escola }}</h1>
+            <p class="page-subtitle">Detalhes e Histórico de Visitas</p>
+        </div>
+        <a href="{% url 'analise_dashboard' %}" class="btn btn-secondary-custom">
+            <i class="fas fa-arrow-left me-2"></i> Voltar ao Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold">
+            <i class="fas fa-chart-bar me-2"></i> Indicadores da Escola (Dados Fictícios)
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <strong>Modalidade:</strong> {{ escola_info.modalidade|default:"N/A" }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Alunos Previstos 2023:</strong> {{ escola_info.alunos_previstos_2023|default:"N/A" }}
+                </div>
+                 <div class="col-md-4 mb-3">
+                    <strong>% Peso:</strong> {{ escola_info.percentual_peso|default:"N/A" }}%
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>SAEPE 2022:</strong> {{ escola_info.saepe_2022|default:"N/A" }}
+                </div>
+                 <div class="col-md-4 mb-3">
+                    <strong>SAEPE 2023:</strong> {{ escola_info.saepe_2023|default:"N/A" }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Proficiência LP 2023:</strong> {{ escola_info.proficiencia_lp_2023|default:"N/A" }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Proficiência MT 2023:</strong> {{ escola_info.proficiencia_mt_2023|default:"N/A" }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Matrícula EFAF 2024:</strong> {{ escola_info.matricula_efaf_2024|default:"N/A" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white fw-bold">
+            <i class="fas fa-history me-2"></i> Histórico de Visitas Técnicas
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Técnico/Analista</th>
+                            <th>Servidor Escola</th>
+                            <th>Demanda</th>
+                            <th>Encaminhamento</th>
+                            <th>Observação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visita in visitas_historico %} <tr>
+                            <td>{{ visita.data_visita|date:"d/m/Y" }}</td>
+                            <td>{{ visita.tecnico_gre|default:"" }}</td>
+                            <td>{{ visita.servidor_escola|default:"" }}</td>
+                            <td>{{ visita.demanda|default:"" }}</td>
+                            <td>{{ visita.encaminhamento|default:"" }}</td>
+                            <td>{{ visita.observacao|default:"" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Nenhuma visita técnica registada para esta escola.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
