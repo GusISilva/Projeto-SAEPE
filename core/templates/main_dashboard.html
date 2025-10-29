@@ -22,7 +22,9 @@
                     <div class="row align-items-center">
                         <div class="col me-2">
                             <div class="text-xs fw-bold text-uppercase mb-1 text-primary">Total de Escolas</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">120</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ total_escolas|default:"0" }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-school fa-2x text-primary-subtle"></i>
@@ -38,7 +40,9 @@
                     <div class="row align-items-center">
                         <div class="col me-2">
                             <div class="text-xs fw-bold text-uppercase mb-1 text-success">Visitas Concluídas</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">45</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ total_visitas|default:"0" }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-check-circle fa-2x text-success-subtle"></i>
@@ -54,7 +58,9 @@
                     <div class="row align-items-center">
                         <div class="col me-2">
                             <div class="text-xs fw-bold text-uppercase mb-1 text-warning">Relatórios Pendentes</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">5</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ relatorios_pendentes|default:"0" }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-exclamation-triangle fa-2x text-warning-subtle"></i>
@@ -70,7 +76,9 @@
                     <div class="row align-items-center">
                         <div class="col me-2">
                             <div class="text-xs fw-bold text-uppercase mb-1 text-info">Última Visita</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">24/Setembro</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ ultima_data_visita|date:"d/m/Y"|default:"N/A" }}
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar-alt fa-2x text-info-subtle"></i>
