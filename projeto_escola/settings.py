@@ -21,13 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', '8x9o+(%&^f0g2jwg#=o-j8$+*i5iq+7p7!10z1&0s+8gtyg=2=')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'projeto_escola.wsgi.app'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_w7OI9AirmEnD',
-        'HOST': 'ep-autumn-mud-adeddl98-pooler.c-2.us-east-1.aws.neon.tech',
-        'PORT': '5432',
+        'NAME': os.environ.get('POSTGRES_DB', 'neondb'),
+        'USER': os.environ.get('POSTGRES_USER', 'neondb_owner'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'npg_w7OI9AirmEnD'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'ep-autumn-mud-adeddl98-pooler.c-2.us-east-1.aws.neon.tech'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
         'OPTIONS': {'sslmode': 'require'},
     }
 }
