@@ -4,20 +4,12 @@
     {
       "src": "projeto_escola/wsgi.py",
       "use": "@vercel/python",
-      "config": {
-        "runtime": "python3.12",
-        "maxLambdaSize": "15mb"
-      }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11" }
     }
   ],
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "projeto_escola/wsgi.py"
-    }
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/media/(.*)", "dest": "/media/$1" },
+    { "src": "/(.*)", "dest": "projeto_escola/wsgi.py" }
   ]
 }
