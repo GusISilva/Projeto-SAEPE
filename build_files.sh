@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Instalando dependências..."
-pip install -r requirements.txt
-
 echo "Aplicando migrações..."
 python manage.py migrate --noinput
 
