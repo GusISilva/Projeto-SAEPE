@@ -72,8 +72,8 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # aqui é o diretório que Vercel vai usar como output
+STATIC_ROOT = BASE_DIR / 'staticfiles'   # pasta onde collectstatic vai colocar os arquivos
+STATICFILES_DIRS = [BASE_DIR / 'static'] # pasta onde você mantém seus arquivos estáticos
 
 # Media files
 MEDIA_URL = '/media/'
