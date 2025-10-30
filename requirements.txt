@@ -14,3 +14,4 @@ six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.2
 virtualenv==20.31.2
+psycopg2-binary==2.9.9
