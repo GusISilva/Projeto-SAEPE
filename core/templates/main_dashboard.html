@@ -3,138 +3,191 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard_principal.css' %}">
+<link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
+<style>
+    /* CSS para o Layout de duas colunas (Sidebar + Conteúdo Principal) */
+    .dashboard-layout-container {
+        display: flex; /* Habilita o layout flexível */
+        width: 100%;
+        min-height: 100vh; /* Garante que a sidebar tenha altura mínima da viewport */
+    }
+
+    .main-content {
+        flex-grow: 1; /* Faz o conteúdo principal ocupar o restante do espaço */
+        padding: 20px 40px; /* Adiciona um padding ao redor do conteúdo principal */
+    }
+
+    /* Ajuste para evitar que o "container my-5" do conteúdo principal estoure a main-content */
+    .main-content > .container {
+        margin: 0 auto;
+        padding-top: 3rem !important; /* Ajusta o espaçamento superior para compensar a remoção do my-5 no container */
+        padding-bottom: 3rem !important;
+    }
+</style>
 {% endblock extra_css %}
 
 {% block content %}
-<div class="container my-5 dashboard-container">
-    <header class="mb-4">
-        <h1 class="display-4 fw-bold text-primary-emphasis">Dashboard Principal</h1>
-        <p class="lead text-muted">
-            Bem-vindo(a) de volta, 
-            <strong class="text-primary">{{ user.username }}</strong>! Visão geral do sistema.
-        </p>
-    </header>
-
-    <div class="row mb-5">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card metric-card shadow border-0 bg-white border-primary-start">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col me-2">
-                            <div class="text-xs fw-bold text-uppercase mb-1 text-primary">Total de Escolas</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ total_escolas|default:"0" }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-school fa-2x text-primary-subtle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card metric-card shadow border-0 bg-white border-success-start">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col me-2">
-                            <div class="text-xs fw-bold text-uppercase mb-1 text-success">Visitas Concluídas</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ total_visitas|default:"0" }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-check-circle fa-2x text-success-subtle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="dashboard-layout-container">
+    
+    <aside class="sidebar">
+        <div class="logo">School <span>DASH</span></div> 
         
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card metric-card shadow border-0 bg-white border-warning-start">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col me-2">
-                            <div class="text-xs fw-bold text-uppercase mb-1 text-warning">Relatórios Pendentes</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ relatorios_pendentes|default:"0" }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-exclamation-triangle fa-2x text-warning-subtle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card metric-card shadow border-0 bg-white border-info-start">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col me-2">
-                            <div class="text-xs fw-bold text-uppercase mb-1 text-info">Última Visita</div>
-                            <div class="h5 mb-0 fw-bold text-gray-800">
-                                {{ ultima_data_visita|date:"d/m/Y"|default:"N/A" }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar-alt fa-2x text-info-subtle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <h2 class="h4 mb-3 fw-semibold">Ações Principais</h2>
-    <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="{% url 'analise_dashboard' %}" class="text-decoration-none">
-                <div class="card action-card shadow border-0 card-data-analysis">
-                    <div class="card-body p-5">
-                        <i class="fas fa-chart-line fa-3x mb-3 text-white"></i>
-                        <h3 class="card-title text-white">Análise de Dados</h3>
-                        <p class="card-text text-white-50">
-                            Visualize gráficos e tabelas detalhadas com os indicadores das escolas.
-                        </p>
-                        <span class="btn btn-light mt-3">Acessar Análise <i class="fas fa-arrow-right ms-2"></i></span>
-                    </div>
-                </div>
+        <a href="{% url 'main_dashboard' %}" class="menu-item active">
+            <i class="fas fa-home"></i> Dashboard Principal
+        </a>
+        <a href="{% url 'analise_dashboard' %}" class="menu-item">
+            <i class="fas fa-chart-line"></i> Análise de Dados
+        </a>
+        <a href="{% url 'visitas' %}" class="menu-item">
+            <i class="fas fa-calendar-alt"></i> Gestão de Visitas
+        </a>
+        <a href="{% url 'relatorios' %}" class="menu-item">
+            <i class="fas fa-clipboard-list"></i> Registrar Relatório
+        </a>
+        
+        {% if user.is_authenticated %}
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
+             <a href="{% url 'logout' %}" class="menu-item" style="color: #dc3545;">
+                <i class="fas fa-sign-out-alt"></i> Sair
             </a>
         </div>
-        
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="{% url 'relatorios' %}" class="text-decoration-none">
-                <div class="card action-card shadow border-0 card-report-register">
-                    <div class="card-body p-5">
-                        <i class="fas fa-file-alt fa-3x mb-3 text-white"></i>
-                        <h3 class="card-title text-white">Registrar Relatório</h3>
-                        <p class="card-text text-white-50">
-                            Preencha o formulário para registrar uma nova visita e relatório.
-                        </p>
-                        <span class="btn btn-light mt-3">Novo Relatório <i class="fas fa-plus-circle ms-2"></i></span>
+        {% endif %}
+
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <header class="mb-4">
+                <h1 class="display-4 fw-bold text-primary-emphasis">Dashboard Principal</h1>
+                <p class="lead text-muted">
+                    Bem-vindo(a) de volta, 
+                    <strong class="text-primary">{{ user.username }}</strong>! Visão geral do sistema.
+                </p>
+            </header>
+
+            <div class="row mb-5">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card metric-card shadow border-0 bg-white border-primary-start">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs fw-bold text-uppercase mb-1 text-primary">Total de Escolas</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">
+                                        {{ total_escolas|default:"0" }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-school fa-2x text-primary-subtle"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </a>
-        </div>
-        
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="{% url 'visitas' %}" class="text-decoration-none">
-                 <div class="card action-card shadow border-0 card-visit-management">
-                    <div class="card-body p-5">
-                        <i class="fas fa-calendar-check fa-3x mb-3 text-white"></i>
-                        <h3 class="card-title text-white">Gestão de Visitas</h3>
-                        <p class="card-text text-white-50">
-                            Gerencie, edite e acompanhe o status de todas as visitas agendadas.
-                        </p>
-                        <span class="btn btn-light mt-3">Ver Visitas <i class="fas fa-search ms-2"></i></span>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card metric-card shadow border-0 bg-white border-success-start">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs fw-bold text-uppercase mb-1 text-success">Visitas Concluídas</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">
+                                        {{ total_visitas|default:"0" }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-success-subtle"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </a>
-        </div>
-    </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card metric-card shadow border-0 bg-white border-warning-start">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs fw-bold text-uppercase mb-1 text-warning">Relatórios Pendentes</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">
+                                        {{ relatorios_pendentes|default:"0" }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning-subtle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card metric-card shadow border-0 bg-white border-info-start">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col me-2">
+                                    <div class="text-xs fw-bold text-uppercase mb-1 text-info">Última Visita</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800">
+                                        {{ ultima_data_visita|date:"d/m/Y"|default:"N/A" }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar-alt fa-2x text-info-subtle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="h4 mb-3 fw-semibold">Ações Principais</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{% url 'analise_dashboard' %}" class="text-decoration-none">
+                        <div class="card action-card shadow border-0 card-data-analysis">
+                            <div class="card-body p-5">
+                                <i class="fas fa-chart-line fa-3x mb-3 text-white"></i>
+                                <h3 class="card-title text-white">Análise de Dados</h3>
+                                <p class="card-text text-white-50">
+                                    Visualize gráficos e tabelas detalhadas com os indicadores das escolas.
+                                </p>
+                                <span class="btn btn-light mt-3">Acessar Análise <i class="fas fa-arrow-right ms-2"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{% url 'relatorios' %}" class="text-decoration-none">
+                        <div class="card action-card shadow border-0 card-report-register">
+                            <div class="card-body p-5">
+                                <i class="fas fa-file-alt fa-3x mb-3 text-white"></i>
+                                <h3 class="card-title text-white">Registrar Relatório</h3>
+                                <p class="card-text text-white-50">
+                                    Preencha o formulário para registrar uma nova visita e relatório.
+                                </p>
+                                <span class="btn btn-light mt-3">Novo Relatório <i class="fas fa-plus-circle ms-2"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{% url 'visitas' %}" class="text-decoration-none">
+                         <div class="card action-card shadow border-0 card-visit-management">
+                            <div class="card-body p-5">
+                                <i class="fas fa-calendar-check fa-3x mb-3 text-white"></i>
+                                <h3 class="card-title text-white">Gestão de Visitas</h3>
+                                <p class="card-text text-white-50">
+                                    Gerencie, edite e acompanhe o status de todas as visitas agendadas.
+                                </p>
+                                <span class="btn btn-light mt-3">Ver Visitas <i class="fas fa-search ms-2"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            </div>
+    </main>
 </div>
 {% endblock content %}

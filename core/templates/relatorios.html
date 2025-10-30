@@ -1,32 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visitações - School DASH</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="logo">School <span>DASH</span></div>
-            <a href="{% url 'main_dashboard' %}" class="menu-item">
-                <i class="fas fa-home"></i> Dashboard Principal
-            </a>
-            <a href="{% url 'analise_dashboard' %}" class="menu-item">
-                <i class="fas fa-chart-line"></i> Análise de Dados
-            </a>
-            <a href="{% url 'visitas' %}" class="menu-item">
-                <i class="fas fa-calendar-alt"></i> Gestão de Visitas
-            </a>
-            <a href="{% url 'relatorios' %}" class="menu-item active">
-                <i class="fas fa-clipboard-list"></i> Registrar Relatório
-            </a>
-        </aside>
+{% extends 'base_dashboard.html' %}
+{% load static %}
 
-        <main class="main-content">
+{% block nav_relatorios %}active{% endblock %}
+
+{% block title %}Relatórios de Visitas - School DASH{% endblock title %}
+
+{% block content %}
+
             <header class="header">
                 <h1 class="header-title">Relatórios de Visitas</h1>
                 <div class="profile-icon">
@@ -97,7 +77,4 @@
                     <a href="#" style="margin: 0 10px;">Termos de uso</a>
                 </div>
             </div>
-        </main>
-    </div>
-</body>
-</html>
+{% endblock content %}   

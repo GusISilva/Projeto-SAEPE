@@ -1,12 +1,15 @@
-{% extends 'base.html' %} 
+{% extends 'base_dashboard.html' %} 
 {% load static %}
+
+{% block nav_analise %}active{% endblock %}
+{% block title %}Análise de Dados - School DASH{% endblock title %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/analise_dashboard.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
-<div class="analise-container my-5">
+<div class="analise-container">
     
     <header class="mb-5">
         <h1 class="page-title">Dashboard de Análise</h1>
@@ -106,7 +109,9 @@
     {% endif %}
 
 </div>
+{% endblock content %}
 
+{% block extra_js %}
 <script>
     // Carrega dados JSON do Django
     const dadosGraficoJson = JSON.parse('{{ dados_grafico_json|escapejs }}');
@@ -166,4 +171,4 @@
     });
 </script>
 
-{% endblock content %}
+{% endblock extra_js %}
