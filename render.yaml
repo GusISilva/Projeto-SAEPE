@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: projeto-escola
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py migrate --noinput
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn projeto_escola.wsgi
+    envVars:
+      - key: DEBUG
+        value: False
