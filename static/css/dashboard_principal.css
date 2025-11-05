@@ -40,12 +40,10 @@ metric-card .card-body .row .col {
 }
 
 .metric-card .card-body .row {
-
     flex-wrap: nowrap; 
 }
 
 .metric-card .col-auto {
-
     flex-shrink: 0;
 }
 
@@ -103,17 +101,14 @@ metric-card .card-body .row .col {
 
 
 .card-data-analysis::before {
-    
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
 }
 
 .card-report-register::before {
-   
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); 
 }
 
 .card-visit-management::before {
-   
     background: linear-gradient(135deg, #00994d 0%, #007f3f 100%); 
 }
 
@@ -205,7 +200,6 @@ metric-card .card-body .row .col {
 
 .main-content {
     flex-grow: 1;
-  
 }
 .sidebar-collapsed + .dashboard-container {
     margin-left: 80px; 
@@ -228,3 +222,174 @@ metric-card .card-body .row .col {
         padding: 1.5rem;
     }
 }
+
+/* ============================================
+   RESPONSIVIDADE MOBILE APRIMORADA
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 1200px) {
+    .dashboard-container {
+        padding: 2rem;
+    }
+
+    .metrics-section .col-xl-3,
+    .metrics-section .col-md-6 {
+        flex: 1 1 48%;
+        max-width: 250px;
+    }
+
+    .action-card {
+        min-height: 220px;
+    }
+}
+
+/* Tablets pequenos */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .dashboard-container {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .dashboard-container header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-container header h1 {
+        font-size: 28px;
+    }
+
+    .metrics-section {
+        min-width: 100%;
+    }
+
+    .metrics-section .col-xl-3,
+    .metrics-section .col-md-6 {
+        flex: 1 1 48%;
+        max-width: none;
+    }
+
+    .actions-section {
+        min-width: 100%;
+    }
+
+    .action-card {
+        min-height: 200px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .dashboard-container header {
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-container header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-container header p {
+        font-size: 14px;
+    }
+
+    .metrics-section {
+        gap: 1rem;
+    }
+
+    .metrics-section .col-xl-3,
+    .metrics-section .col-md-6 {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    .metric-card {
+        padding: 15px;
+    }
+
+    .metric-card .card-body {
+        padding: 12px;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .actions-section {
+        gap: 1rem;
+    }
+
+    .action-card {
+        min-height: 180px;
+    }
+
+    .action-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .action-card .card-title {
+        font-size: 18px;
+    }
+
+    .action-card .card-text {
+        font-size: 14px;
+        min-height: 35px;
+    }
+
+    .action-card .btn-light {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+    .dashboard-container {
+        padding: 0.75rem;
+    }
+
+    .dashboard-container header h1 {
+        font-size: 20px;
+    }
+
+    .dashboard-container header p {
+        font-size: 13px;
+    }
+
+    .metric-card {
+        padding: 12px;
+    }
+
+    .metric-card .text-xs {
+        font-size: 0.7rem;
+    }
+
+    .action-card {
+        min-height: 160px;
+    }
+
+    .action-card .card-title {
+        font-size: 16px;
+    }
+
+    .action-card .card-text {
+        font-size: 13px;
+        min-height: 30px;
+    }
+
+    .action-card .btn-light {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+}
+

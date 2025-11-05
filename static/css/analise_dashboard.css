@@ -111,3 +111,110 @@
     padding: 15px 20px;
     color: var(--text-color);
 }
+
+/* ============================================
+   RESPONSIVIDADE MOBILE
+   ============================================ */
+
+/* Tablets e telas médias */
+@media (max-width: 992px) {
+    .page-title {
+        font-size: 28px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+    }
+
+    .filter-card {
+        padding: 20px;
+    }
+
+    .card-filter-title {
+        font-size: 16px;
+    }
+
+    .btn-primary-custom, 
+    .btn-secondary-custom {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .filter-form .row {
+        margin-bottom: 10px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 24px;
+    }
+
+    .page-subtitle {
+        font-size: 13px;
+    }
+
+    .filter-card {
+        padding: 15px;
+    }
+
+    .card-filter-title {
+        font-size: 15px;
+    }
+
+    .filter-form .input-group {
+        flex-direction: column;
+    }
+
+    .filter-form .input-group-text {
+        border-radius: 8px 8px 0 0;
+        border-right: 1px solid #ced4da;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .filter-form select.form-select,
+    .filter-form .input-group > .form-control,
+    .filter-form .input-group > .form-select {
+        border-radius: 0 0 8px 8px;
+        border-top: none;
+    }
+
+    .btn-primary-custom, 
+    .btn-secondary-custom {
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+
+    .card-header {
+        font-size: 14px;
+        padding: 12px 15px;
+    }
+
+    /* Ajustar gráficos/tabelas para scroll horizontal se necessário */
+    .card-body {
+        overflow-x: auto;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+    .page-title {
+        font-size: 20px;
+    }
+
+    .page-subtitle {
+        font-size: 12px;
+    }
+
+    .filter-card {
+        padding: 12px;
+    }
+
+    .btn-primary-custom, 
+    .btn-secondary-custom {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}

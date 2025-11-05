@@ -61,12 +61,13 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+    z-index: 1;
 }
 
 .logo-icon {
     width: 60px;
     height: 60px;
-    background-image: url("{% static 'image_fa1186.png' %}"); /* Assumindo que a imagem está na pasta static */
+    background-image: url("{% static 'image_fa1186.png' %}");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -76,12 +77,14 @@
     font-size: 42px;
     font-weight: 700;
     margin-bottom: 5px;
+    z-index: 1;
 }
 
 .brand-subtitle {
     font-size: 18px;
     font-weight: 300;
     opacity: 0.9;
+    z-index: 1;
 }
 
 .register-title {
@@ -185,22 +188,113 @@
     margin-bottom: 5px;
 }
 
-/* Responsividade */
+/* ============================================
+   RESPONSIVIDADE MOBILE
+   ============================================ */
+
+/* Tablets */
 @media (max-width: 992px) {
     .register-right {
         display: none;
     }
-}
 
-@media (max-width: 768px) {
     .register-container {
         margin: 0;
-        min-height: auto;
-        display: block;
-        padding: 40px 20px;
     }
 
     .register-left {
-        padding: 40px 30px;
+        padding: 50px 60px;
+    }
+
+    .register-title {
+        font-size: 28px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .register-container {
+        min-height: auto;
+        display: block;
+        padding: 30px 20px;
+    }
+
+    .register-left {
+        padding: 30px 20px;
+    }
+
+    .register-title {
+        font-size: 26px;
+    }
+
+    .register-subtitle {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="password"] {
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .password-hint {
+        font-size: 11px;
+    }
+
+    .btn-register {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .login-link {
+        font-size: 13px;
+        margin-top: 20px;
+    }
+
+    .footer-text {
+        margin-top: 30px;
+        font-size: 11px;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .register-container {
+        padding: 20px 15px;
+    }
+
+    .register-left {
+        padding: 20px 15px;
+    }
+
+    .register-title {
+        font-size: 24px;
+    }
+
+    .register-subtitle {
+        font-size: 13px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-register {
+        padding: 11px;
+        font-size: 15px;
+    }
+
+    .footer-text {
+        font-size: 10px;
     }
 }

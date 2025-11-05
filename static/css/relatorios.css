@@ -25,7 +25,7 @@ body {
     position: sticky; 
     top: 0;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .logo {
@@ -242,13 +242,25 @@ body {
     margin: 0 10px;
 }
 
-/* Responsividade */
+/* ============================================
+   RESPONSIVIDADE MOBILE APRIMORADA
+   ============================================ */
+
+/* Tablets grandes */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: 30px;
+    }
+}
+
+/* Tablets */
 @media (max-width: 992px) {
     .sidebar {
         width: 100%;
         height: auto;
         padding: 20px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        position: relative;
     }
 
     .dashboard-container {
@@ -262,46 +274,177 @@ body {
     .header {
         flex-direction: column;
         align-items: flex-start;
+        padding: 15px;
     }
 
     .header-title {
         margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    .table-card {
+        padding: 20px;
     }
 
     .table-controls {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
     }
 
     .control-item {
-        margin-bottom: 10px;
+        width: 100%;
     }
 
     .search-input {
         width: 100%;
     }
+}
 
-    .table-head, .table-row {
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        padding: 15px;
+    }
+
+    .logo {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .menu-item {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .menu-item i {
+        margin-right: 10px;
+        font-size: 16px;
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .header {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+    .header-title {
+        font-size: 18px;
+    }
+
+    .profile-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .table-card {
+        padding: 15px;
+    }
+
+    .table-title {
+        font-size: 16px;
+    }
+
+    .header-actions {
         flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-action {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .table-head {
+        font-size: 12px;
+        padding: 8px 0;
+    }
+
+    .table-row {
+        padding: 12px 0;
+        font-size: 14px;
     }
 
     .col-checkbox {
         width: 10%;
     }
+
     .col-name {
         width: 60%;
-        margin-left: 5px;
     }
+
     .col-date {
-        width: 25%;
+        width: 30%;
+        font-size: 12px;
     }
 
     .footer {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        padding: 15px 0;
+        font-size: 11px;
     }
+
     .footer > div:first-child {
         margin-bottom: 10px;
+    }
+
+    .footer a {
+        margin: 0 5px;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .header {
+        padding: 10px;
+    }
+
+    .header-title {
+        font-size: 16px;
+    }
+
+    .table-card {
+        padding: 12px;
+    }
+
+    .table-title {
+        font-size: 15px;
+    }
+
+    .search-input {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    .table-head {
+        font-size: 11px;
+    }
+
+    .table-row {
+        font-size: 13px;
+        padding: 10px 0;
+    }
+
+    .col-checkbox {
+        width: 12%;
+    }
+
+    .col-name {
+        width: 55%;
+    }
+
+    .col-date {
+        width: 33%;
+        font-size: 11px;
     }
 }
