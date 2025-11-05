@@ -112,9 +112,6 @@
     color: var(--text-color);
 }
 
-/* ============================================
-   RESPONSIVIDADE MOBILE
-   ============================================ */
 
 /* Tablets e telas médias */
 @media (max-width: 992px) {
