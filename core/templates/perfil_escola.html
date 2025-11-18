@@ -63,6 +63,7 @@
                             <th>Demanda</th>
                             <th>Encaminhamento</th>
                             <th>Observação</th>
+                            <th>Ocorrências</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,10 +74,17 @@
                             <td>{{ visita.demanda|default:"" }}</td>
                             <td>{{ visita.encaminhamento|default:"" }}</td>
                             <td>{{ visita.observacao|default:"" }}</td>
+                            <td>
+                                {% for ocorrencia in visita.ocorrencias.all %}
+                                    <span class="badge bg-secondary me-1">{{ ocorrencia.descricao }}</span>
+                                {% empty %}
+                                    Nenhuma ocorrência registada
+                                {% endfor %}
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">Nenhuma visita técnica registada para esta escola.</td>
+                            <td colspan="7" class="text-center">Nenhuma visita técnica registada para esta escola.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

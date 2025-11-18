@@ -1,45 +1,53 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visitações - School DASH</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="logo">School <span>DASH</span></div>
-            <a href="{% url 'main_dashboard' %}" class="menu-item">
-                <i class="fas fa-home"></i> Dashboard Principal
-            </a>
-            <a href="{% url 'analise_dashboard' %}" class="menu-item">
-                <i class="fas fa-chart-line"></i> Análise de Dados
-            </a>
-            <a href="{% url 'visitas' %}" class="menu-item">
-                <i class="fas fa-calendar-alt"></i> Gestão de Visitas
-            </a>
-            <a href="{% url 'relatorios' %}" class="menu-item active">
-                <i class="fas fa-clipboard-list"></i> Registrar Relatório
-            </a>
-        </aside>
+{% extends 'base.html' %}
+{% load static %}
 
-        <main class="main-content">
-            <header class="header">
-                <h1 class="header-title">Relatórios de Visitas</h1>
-                <div class="profile-icon">
-                    <i class="fas fa-user"></i>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/relatorios.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo">School <span>DASH</span></div>
+        <a href="{% url 'main_dashboard' %}" class="menu-item">
+            <i class="fas fa-home"></i> Dashboard Principal
+        </a>
+        <a href="{% url 'analise_dashboard' %}" class="menu-item">
+            <i class="fas fa-chart-line"></i> Análise de Dados
+        </a>
+        <a href="{% url 'visitas' %}" class="menu-item">
+            <i class="fas fa-calendar-alt"></i> Gestão de Visitas
+        </a>
+        <a href="{% url 'relatorios' %}" class="menu-item active">
+            <i class="fas fa-clipboard-list"></i> Registrar Relatório
+        </a>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1 class="header-title">Relatórios de Visitas</h1>
+            <div class="profile-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            </header>
+            {% endfor %}
+        {% endif %}
 
+        <form id="relatoriosForm" method="POST">
+            {% csrf_token %}
             <div class="table-card">
                 <div class="table-header">
                     <h2 class="table-title">Relatórios Recentes</h2>
                     <div class="header-actions">
-                        <button class="btn-action"><i class="fas fa-upload"></i> Exportar</button>
-                        <button class="btn-action"><i class="fas fa-trash-alt"></i> Excluir</button>
+                        <button type="button" class="btn-action" id="exportBtn"><i class="fas fa-upload"></i> Exportar</button>
+                        <button type="button" class="btn-action btn-danger" id="deleteBtn"><i class="fas fa-trash-alt"></i> Excluir</button>
                     </div>
                 </div>
 
@@ -51,53 +59,136 @@
                     <div class="control-item">
                         <label for="sort">Ordenar por:</label>
                         <select id="sort" class="search-input" style="width: 150px;">
-                            <option>Data (Mais Recente)</option>
-                            <option>Nome (A-Z)</option>
+                            <option value="data">Data (Mais Recente)</option>
+                            <option value="nome">Nome (A-Z)</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="table-content">
                     <div class="table-head">
-                        <div class="col-checkbox"></div>
+                        <div class="col-checkbox">
+                            <input type="checkbox" id="selectAll">
+                        </div>
                         <div class="col-name">NOME DA ESCOLA</div>
                         <div class="col-date">DATA DA VISITA</div>
+                        <div class="col-tecnico">TÉCNICO</div>
                     </div>
 
+                    {% for visita in relatorios %}
                     <div class="table-row">
                         <div class="col-checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" name="selected_relatorios" value="{{ visita.id }}">
                         </div>
-                        <div class="col-name">EREM Padre Nilo Coelho</div>
-                        <div class="col-date">21/Setembro/2024</div>
+                        <div class="col-name">{{ visita.escola }}</div>
+                        <div class="col-date">{{ visita.data_visita|date:"d/m/Y" }}</div>
+                        <div class="col-tecnico">{{ visita.tecnico_gre }}</div>
                     </div>
-
+                    {% empty %}
                     <div class="table-row">
-                        <div class="col-checkbox">
-                            <input type="checkbox">
-                        </div>
-                        <div class="col-name">Escola Estadual João Bezerra</div>
-                        <div class="col-date">21/Setembro/2024</div>
+                        <div class="col-checkbox"></div>
+                        <div class="col-name" colspan="3">Nenhum relatório encontrado.</div>
                     </div>
-
-                    <div class="table-row">
-                        <div class="col-checkbox">
-                            <input type="checkbox">
-                        </div>
-                        <div class="col-name">ETE Cícero Dias</div>
-                        <div class="col-date">21/Setembro/2024</div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
+        </form>
 
-            <div class="footer">
-                <div>© 2021 Horizon UI. All Rights Reserved. Made with love by Simmmple!</div>
-                <div>
-                   <a href="#" style="margin: 0 10px;">Licenças</a>
-                    <a href="#" style="margin: 0 10px;">Termos de uso</a>
-                </div>
+        <div class="footer">
+            <div>© 2021 Horizon UI. All Rights Reserved. Made with love by Simmmple!</div>
+            <div>
+               <a href="#" style="margin: 0 10px;">Licenças</a>
+                <a href="#" style="margin: 0 10px;">Termos de uso</a>
             </div>
-        </main>
-    </div>
-</body>
-</html>
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('input[name="selected_relatorios"]');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const form = document.getElementById('relatoriosForm');
+
+    // Select all functionality
+    selectAllCheckbox.addEventListener('change', function() {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Delete selected
+    deleteBtn.addEventListener('click', function() {
+        const selected = document.querySelectorAll('input[name="selected_relatorios"]:checked');
+        if (selected.length === 0) {
+            alert('Selecione pelo menos um relatório para excluir.');
+            return;
+        }
+        if (confirm('Tem certeza que deseja excluir os relatórios selecionados?')) {
+            // Add action to form
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete';
+            form.appendChild(actionInput);
+            form.submit();
+        }
+    });
+
+    // Export selected
+    exportBtn.addEventListener('click', function() {
+        const selected = document.querySelectorAll('input[name="selected_relatorios"]:checked');
+        if (selected.length === 0) {
+            alert('Selecione pelo menos um relatório para exportar.');
+            return;
+        }
+        // Add action to form
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'export';
+        form.appendChild(actionInput);
+        form.submit();
+    });
+
+    // Search functionality
+    document.getElementById('search').addEventListener('input', filterTable);
+
+    // Sort functionality
+    document.getElementById('sort').addEventListener('change', sortTable);
+
+    function filterTable() {
+        const filter = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('.table-row');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    }
+
+    function sortTable() {
+        const sortBy = document.getElementById('sort').value;
+        const tableContent = document.querySelector('.table-content');
+        const rows = Array.from(document.querySelectorAll('.table-row')).slice(1); // Skip header
+
+        rows.sort((a, b) => {
+            if (sortBy === 'data') {
+                const dateA = new Date(a.querySelector('.col-date').textContent.split('/').reverse().join('-'));
+                const dateB = new Date(b.querySelector('.col-date').textContent.split('/').reverse().join('-'));
+                return dateB - dateA;
+            } else if (sortBy === 'nome') {
+                const nameA = a.querySelector('.col-name').textContent.toLowerCase();
+                const nameB = b.querySelector('.col-name').textContent.toLowerCase();
+                return nameA.localeCompare(nameB);
+            }
+        });
+
+        // Re-append sorted rows
+        rows.forEach(row => tableContent.appendChild(row));
+    }
+});
+</script>
+
+{% endblock content %}

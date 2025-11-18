@@ -73,7 +73,7 @@ class DadosFicticiosEscola(models.Model):
 class VisitaTecnica(models.Model):
     # Usamos os nomes da sua planilha, mas em formato Python
     # (minúsculas, sem espaços, sem acentos)
-    
+
     escola = models.CharField(max_length=255)
     data_visita = models.DateField(null=True, blank=True) # Melhor tipo para datas
     tecnico_gre = models.CharField(max_length=255, null=True, blank=True)
@@ -81,6 +81,7 @@ class VisitaTecnica(models.Model):
     demanda = models.TextField(null=True, blank=True) # TextField é melhor para textos longos
     encaminhamento = models.TextField(null=True, blank=True)
     observacao = models.TextField(null=True, blank=True)
+    ocorrencias = models.ManyToManyField(Ocorrencia, blank=True, verbose_name="Ocorrências observadas")
 
     def __str__(self):
         # Isto é o que vai aparecer no painel de admin do Django
