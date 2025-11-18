@@ -85,13 +85,11 @@ class VisitaTecnicaForm(forms.ModelForm):
 
     # 2. Vamos criar uma lista de TÉCNICOS para o dropdown
     # Buscamos da própria tabela de visitas que acabámos de importar
-    lista_tecnicos = list(
-        VisitaTecnica.objects.values_list('tecnico_gre', 'tecnico_gre')
-                             .exclude(tecnico_gre=None) # Remove valores nulos
-                             .distinct()
-                             .order_by('tecnico_gre')
-    )
-    TECNICOS_CHOICES = [('', 'Selecione o técnico...')] + lista_tecnicos
+    #lista_tecnicos = list(
+      #  VisitaTecnica.objects.values_list('tecnico_gre', 'tecnico_gre')
+     #                        .exclude(tecnico_gre=None) # Remove valores nulos
+       #                      .distinct()
+      ### TECNICOS_CHOICES = [('', 'Selecione o técnico...')] + lista_tecnicos###
 
     # 3. Definimos os campos do formulário
     escola = forms.ChoiceField(
@@ -104,10 +102,11 @@ class VisitaTecnicaForm(forms.ModelForm):
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         required=False # <--- ADICIONE ESTA LINHA
     )
-    tecnico_gre = forms.ChoiceField(
+    tecnico_gre = forms.CharField(
         label="Técnico/Analista - GRE",
-        choices=TECNICOS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-select'})
+        # Não precisa de 'choices' para CharField
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Técnico ou Analista'}), # Campo de texto simples
+        max_length=255 # Boa prática definir um limite
     )
     servidor_escola = forms.CharField(
         label="Servidor da Escola",

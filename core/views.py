@@ -404,6 +404,12 @@ def main_dashboard_view(request):
 @login_required(login_url='login')
 def main_dashboard_view(request):
     try:
+        # >>> INÍCIO DA CORREÇÃO TEMPORÁRIA <<<
+        # Esta linha garante que a função de carga seja chamada na primeira visita,
+        # caso as tabelas estejam vazias. REMOVA-A APÓS A PRIMEIRA EXECUÇÃO BEM-SUCEDIDA!
+        carregar_dados_csv_para_modelos() 
+        # >>> FIM DA CORREÇÃO TEMPORÁRIA <<<
+
         # 1. Total de Escolas (contando escolas distintas nos DadosFicticiosEscola)
         total_escolas = DadosFicticiosEscola.objects.values('escola').distinct().count()
 
