@@ -146,10 +146,27 @@ def main_dashboard_view(request):
 @login_required(login_url='login')
 def relatorios_view(request):
     if request.method == 'POST':
-        return redirect('main_dashboard')
-    else:
-        context = {}
-        return render(request, 'relatorios.html', context)
+        action = request.POST.get('action')
+        selected_ids = request.POST.getlist('selected_relatorios')
+
+        if action == 'delete' and selected_ids:
+            try:
+                VisitaTecnica.objects.filter(id__in=selected_ids).delete()
+                messages.success(request, f'{len(selected_ids)} relatório(s) excluído(s) com sucesso.')
+            except Exception as e:
+                messages.error(request, f'Erro ao excluir relatórios: {e}')
+        elif action == 'export' and selected_ids:
+            # Implementar lógica de exportação aqui
+            messages.info(request, 'Funcionalidade de exportação será implementada em breve.')
+
+        return redirect('relatorios')
+
+    # GET request - mostrar lista de relatórios
+    relatorios = VisitaTecnica.objects.all().order_by('-data_visita')
+    context = {
+        'relatorios': relatorios,
+    }
+    return render(request, 'relatorios.html', context)
 
 
 @login_required(login_url='login')

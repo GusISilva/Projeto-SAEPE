@@ -1,7 +1,7 @@
 # core/forms.py
 
 from django import forms
-from .models import Visita, Escola, DadosFicticiosEscola, VisitaTecnica
+from .models import Visita, Escola, DadosFicticiosEscola, VisitaTecnica, Ocorrencia
 
 class VisitaForm(forms.ModelForm):
     class Meta:
@@ -127,8 +127,16 @@ class VisitaTecnicaForm(forms.ModelForm):
         required=False # Este campo é opcional
     )
 
+    # Campo para as ocorrências (checkboxes)
+    ocorrencias = forms.ModelMultipleChoiceField(
+        queryset=Ocorrencia.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        required=False,
+        label="Ocorrências observadas"
+    )
+
     class Meta:
         model = VisitaTecnica  # O nosso "molde"
         # Os campos do modelo que este formulário vai usar
-        fields = ['escola', 'data_visita', 'tecnico_gre', 'servidor_escola', 
-                  'demanda', 'encaminhamento', 'observacao']
+        fields = ['escola', 'data_visita', 'tecnico_gre', 'servidor_escola',
+                  'demanda', 'encaminhamento', 'observacao', 'ocorrencias']
