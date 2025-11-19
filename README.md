@@ -7,9 +7,9 @@ A aplicação deverá gerar **gráficos** que facilitem o entendimento e a anál
 ---
 
 ## Tecnologias
-- **Linguagem:**  
-- **Frameworks:** 
-- **Banco de Dados:** 
+- **Linguagem: Python**  
+- **Frameworks: Django, Pandas** 
+- **Banco de Dados: SQLite** 
 - **Outras Ferramentas:** 
 
 ---
